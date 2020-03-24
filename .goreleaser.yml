@@ -12,4 +12,4 @@ builds:
 checksum:
   name_template: 'checksums.txt'
 archives:
-  - format: zip
+- format: zip
