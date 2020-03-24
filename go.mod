@@ -1,4 +1,4 @@
-module github.com/hashicorp/terraform-provider-scaffolding
+module github.com/liatrio/terraform-provider-harbor
 
 go 1.12
 
