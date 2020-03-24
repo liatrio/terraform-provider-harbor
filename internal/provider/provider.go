@@ -7,11 +7,19 @@ import (
 
 func New() terraform.ResourceProvider {
 	return &schema.Provider{
-		DataSourcesMap: map[string]*schema.Resource{
-			"scaffolding_data_source": dataSourceScaffolding(),
-		},
 		ResourcesMap: map[string]*schema.Resource{
-			"scaffolding_resource": resourceScaffolding(),
+			"harbor_project":       resourceScaffolding(),
+			"harbor_robot_account": resourceScaffolding(),
+		},
+		Schema: map[string]*schema.Schema{
+			"harbor_url": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"harbor_admin_secret": {},
+		},
+		ConfigureFunc: func(data *schema.ResourceData) (i interface{}, err error) {
+
 		},
 	}
 }

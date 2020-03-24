@@ -12,26 +12,41 @@ func resourceScaffolding() *schema.Resource {
 		Delete: resourceScaffoldingDelete,
 
 		Schema: map[string]*schema.Schema{
-			"sample_attribute": {
+			"project_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
+				ForceNew: true,
+			},
+			"robot_account_jwt": {
+				Type:      schema.TypeString,
+				Computed:  true,
+				Sensitive: true,
 			},
 		},
 	}
 }
 
-func resourceScaffoldingCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceScaffoldingRead(d *schema.ResourceData, meta interface{}) error {
+
+	d.Set("sample_attribute", "some string")
+	d.SetId("${product_id}/${robot_account_id}")
+
 	return nil
 }
 
-func resourceScaffoldingRead(d *schema.ResourceData, meta interface{}) error {
-	return nil
+func resourceScaffoldingCreate(d *schema.ResourceData, meta interface{}) error {
+	d.Get("")
+
+	return resourceScaffoldingRead(d, meta)
 }
 
 func resourceScaffoldingUpdate(d *schema.ResourceData, meta interface{}) error {
+
 	return nil
 }
 
 func resourceScaffoldingDelete(d *schema.ResourceData, meta interface{}) error {
+	d.SetId("")
+
 	return nil
 }
