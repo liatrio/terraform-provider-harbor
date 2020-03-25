@@ -14,7 +14,7 @@ type Project struct {
 	UpdateTime         string  `json:"update_time"`
 	OwnerName          string  `json:"owner_name"`
 	Name               string  `json:"name"`
-	Deleted            string  `json:"deleted"`
+	Deleted            bool    `json:"deleted"`
 	OwnerId            int32   `json:"owner_id"`
 	RepoCount          int     `json:"repo_count"`
 	CreationTime       string  `json:"creation_time"`
@@ -36,14 +36,14 @@ type ProjectMetadata struct {
 }
 
 func (client *Client) GetProject(name string) (*Project, error) {
-	var project *Project
+	var projects []Project
 
-	err := client.get("/projects", project, map[string]string{"name": name})
+	err := client.get("/projects", &projects, map[string]string{"name": name})
 	if err != nil {
 		return nil, err
 	}
 
-	return project, nil
+	return &projects[0], nil
 }
 
 func (client *Client) NewProject(project *ProjectReq) error {

@@ -33,21 +33,33 @@ func resourceProject() *schema.Resource {
 	}
 }
 
-func resourceProjectRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*harbor.Client)
-	id := d.Get("name").(string)
-	project, err := client.GetProject(id)
+func setProjectData(d *schema.ResourceData, project *harbor.Project) error {
+	d.SetId(project.Name)
+
+	err := d.Set("project_id", project.ProjectId)
 	if err != nil {
 		return err
 	}
-	d.SetId(d.Get("name").(string))
-
-	d.Set("project_id", project.ProjectId)
-
-	d.Set("name", project.Name)
-	d.Set("public", project.Metadata.Public)
-
+	err = d.Set("name", project.Name)
+	if err != nil {
+		return err
+	}
+	err = d.Set("public", project.Metadata.Public)
+	if err != nil {
+		return err
+	}
 	return nil
+}
+
+func resourceProjectRead(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*harbor.Client)
+	projectName := d.Get("name").(string)
+	project, err := client.GetProject(projectName)
+	if err != nil {
+		return err
+	}
+
+	return setProjectData(d, project)
 }
 
 func resourceProjectCreate(d *schema.ResourceData, meta interface{}) error {

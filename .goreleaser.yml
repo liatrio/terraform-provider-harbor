@@ -1,0 +1,15 @@
+builds:
+- binary: {{.ProjectName}}_v{{.Version}}
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - darwin
+  - linux
+  - windows
+  goarch:
+  - amd64
+  - 386
+checksum:
+  name_template: 'checksums.txt'
+archives:
+- format: zip

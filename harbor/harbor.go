@@ -12,17 +12,17 @@ import (
 )
 
 type Client struct {
-	baseUrl    string
+	baseURL    string
 	username   string
 	password   string
 	httpClient *http.Client
 }
 
 const (
-	apiUrl = "/api"
+	apiURL = "/api"
 )
 
-func NewClient(baseUrl string, username string, password string, tlsInsecureSkipVerify bool) (*Client, error) {
+func NewClient(baseURL string, username string, password string, tlsInsecureSkipVerify bool) (*Client, error) {
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: tlsInsecureSkipVerify},
 	}
@@ -32,7 +32,7 @@ func NewClient(baseUrl string, username string, password string, tlsInsecureSkip
 	}
 
 	client := &Client{
-		baseUrl:    baseUrl,
+		baseURL:    baseURL,
 		username:   username,
 		password:   password,
 		httpClient: httpClient,
@@ -42,7 +42,6 @@ func NewClient(baseUrl string, username string, password string, tlsInsecureSkip
 }
 
 func (client *Client) sendRequest(request *http.Request) ([]byte, error) {
-
 	request.SetBasicAuth(client.username, client.password)
 	request.Header.Add("Content-Type", "application/json")
 
@@ -66,9 +65,9 @@ func (client *Client) sendRequest(request *http.Request) ([]byte, error) {
 }
 
 func (client *Client) get(path string, resource interface{}, params map[string]string) error {
-	resourceUrl := client.baseUrl + apiUrl + path
+	resourceURL := client.baseURL + apiURL + path
 
-	request, err := http.NewRequest(http.MethodGet, resourceUrl, nil)
+	request, err := http.NewRequest(http.MethodGet, resourceURL, nil)
 	if err != nil {
 		return err
 	}
@@ -90,14 +89,14 @@ func (client *Client) get(path string, resource interface{}, params map[string]s
 }
 
 func (client *Client) post(path string, requestBody interface{}) ([]byte, error) {
-	resourceUrl := client.baseUrl + apiUrl + path
+	resourceURL := client.baseURL + apiURL + path
 
 	payload, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := http.NewRequest(http.MethodPost, resourceUrl, bytes.NewReader(payload))
+	request, err := http.NewRequest(http.MethodPost, resourceURL, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
@@ -108,14 +107,14 @@ func (client *Client) post(path string, requestBody interface{}) ([]byte, error)
 }
 
 func (client *Client) put(path string, requestBody interface{}) error {
-	resourceUrl := client.baseUrl + apiUrl + path
+	resourceURL := client.baseURL + apiURL + path
 
 	payload, err := json.Marshal(requestBody)
 	if err != nil {
 		return err
 	}
 
-	request, err := http.NewRequest(http.MethodPut, resourceUrl, bytes.NewReader(payload))
+	request, err := http.NewRequest(http.MethodPut, resourceURL, bytes.NewReader(payload))
 	if err != nil {
 		return err
 	}
@@ -126,7 +125,7 @@ func (client *Client) put(path string, requestBody interface{}) error {
 }
 
 func (client *Client) delete(path string, requestBody interface{}) error {
-	resourceUrl := client.baseUrl + apiUrl + path
+	resourceURL := client.baseURL + apiURL + path
 
 	var body io.Reader
 
@@ -138,7 +137,7 @@ func (client *Client) delete(path string, requestBody interface{}) error {
 		body = bytes.NewReader(payload)
 	}
 
-	request, err := http.NewRequest(http.MethodDelete, resourceUrl, body)
+	request, err := http.NewRequest(http.MethodDelete, resourceURL, body)
 	if err != nil {
 		return err
 	}
