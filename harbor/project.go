@@ -1,8 +1,6 @@
 package harbor
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type ProjectReq struct {
 	CountLimit  int64  `json:"count_limit,omitempty"`
@@ -37,13 +35,30 @@ type ProjectMetadata struct {
 	PreventVul           string `json:"prevent_vul,omitempty"`
 }
 
-func (client *Client) GetProject(id string) (*Project, error) {
+func (client *Client) GetProject(name string) (*Project, error) {
 	var project *Project
 
-	err := client.get(fmt.Sprintf("projects/%s", id), &project, nil)
+	err := client.get("/projects", project, map[string]string{"name": name})
 	if err != nil {
 		return nil, err
 	}
 
 	return project, nil
+}
+
+func (client *Client) NewProject(project *ProjectReq) error {
+	_, err := client.post("/projects", project)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (client *Client) UpdateProject(projectId string, project *ProjectReq) error {
+	return client.put(fmt.Sprintf("/projects/%s", projectId), project)
+}
+
+func (client *Client) DeleteProject(projectId string) error {
+	return client.delete(fmt.Sprintf("/projects/%s", projectId), nil)
 }
