@@ -1,8 +1,6 @@
 package provider
 
 import (
-	"strconv"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
@@ -54,7 +52,7 @@ func resourceProjectRead(d *schema.ResourceData, meta interface{}) error {
 	projectID := d.Id()
 	project, err := client.GetProject(projectID)
 	if err != nil {
-		return err
+		return handleNotFoundError(err, d)
 	}
 
 	return setProjectData(d, project)
@@ -89,7 +87,7 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 		},
 	}
 
-	projectID := strconv.Itoa(d.Get("project_id").(int))
+	projectID := d.Id()
 
 	err := client.UpdateProject(projectID, project)
 	if err != nil {
@@ -102,7 +100,7 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
 
-	projectID := strconv.Itoa(d.Get("project_id").(int))
+	projectID := d.Id()
 
 	err := client.DeleteProject(projectID)
 	if err != nil {

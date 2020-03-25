@@ -10,7 +10,7 @@ import (
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
-func TestAccHarborProject_basic(t *testing.T) {
+func TestAccHarborProjectBasic(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -19,7 +19,7 @@ func TestAccHarborProject_basic(t *testing.T) {
 		CheckDestroy: testAccCheckHarborProjectDestroy(),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProject_basic(projectName),
+				Config: testHarborProjectBasic(projectName, "true"),
 				Check:  testAccCheckHarborProjectExists("harbor_project.project"),
 			},
 			//		{
@@ -32,12 +32,36 @@ func TestAccHarborProject_basic(t *testing.T) {
 	})
 }
 
-func testHarborProject_basic(projectName string) string {
+func TestAccHarborProjectUpdate(t *testing.T) {
+	projectName := "terraform-" + acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testAccCheckHarborProjectDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testHarborProjectBasic(projectName, "true"),
+				Check:  testAccCheckHarborProjectExists("harbor_project.project"),
+			},
+			{
+				Config: testHarborProjectBasic(projectName, "false"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckHarborProjectExists("harbor_project.project"),
+					resource.TestCheckResourceAttr("harbor_project.project", "public", "false"),
+				),
+			},
+		},
+	})
+}
+
+func testHarborProjectBasic(projectName string, public string) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
 	name     = "%s"
+	public   = "%s"
 }
-	`, projectName)
+	`, projectName, public)
 }
 
 func testAccCheckHarborProjectExists(resourceName string) resource.TestCheckFunc {

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -60,7 +60,10 @@ func (client *Client) sendRequest(request *http.Request) ([]byte, string, error)
 	}
 
 	if response.StatusCode >= 400 {
-		return nil, "", errors.New("Bad Request")
+		return nil, "", &APIError{
+			Code:    response.StatusCode,
+			Message: fmt.Sprintf("error sending %s request to %s: %s", request.Method, request.URL.Path, response.Status),
+		}
 	}
 
 	return body, response.Header.Get("Location"), nil
