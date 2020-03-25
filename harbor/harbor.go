@@ -24,6 +24,7 @@ const (
 
 func NewClient(baseURL string, username string, password string, tlsInsecureSkipVerify bool) (*Client, error) {
 	transport := &http.Transport{
+		//nolint:gosec
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: tlsInsecureSkipVerify},
 	}
 
