@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Client struct {
@@ -42,27 +43,27 @@ func NewClient(baseURL string, username string, password string, tlsInsecureSkip
 	return client, nil
 }
 
-func (client *Client) sendRequest(request *http.Request) ([]byte, error) {
+func (client *Client) sendRequest(request *http.Request) ([]byte, string, error) {
 	request.SetBasicAuth(client.username, client.password)
 	request.Header.Add("Content-Type", "application/json")
 
 	response, err := client.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if response.StatusCode >= 400 {
-		return nil, errors.New("Bad Request")
+		return nil, "", errors.New("Bad Request")
 	}
 
-	return body, nil
+	return body, response.Header.Get("Location"), nil
 }
 
 func (client *Client) get(path string, resource interface{}, params map[string]string) error {
@@ -81,7 +82,7 @@ func (client *Client) get(path string, resource interface{}, params map[string]s
 		request.URL.RawQuery = query.Encode()
 	}
 
-	body, err := client.sendRequest(request)
+	body, _, err := client.sendRequest(request)
 	if err != nil {
 		return err
 	}
@@ -89,22 +90,23 @@ func (client *Client) get(path string, resource interface{}, params map[string]s
 	return json.Unmarshal(body, resource)
 }
 
-func (client *Client) post(path string, requestBody interface{}) ([]byte, error) {
+func (client *Client) post(path string, requestBody interface{}) ([]byte, string, error) {
 	resourceURL := client.baseURL + apiURL + path
 
 	payload, err := json.Marshal(requestBody)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	request, err := http.NewRequest(http.MethodPost, resourceURL, bytes.NewReader(payload))
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	body, err := client.sendRequest(request)
+	body, location, err := client.sendRequest(request)
+	location = strings.Replace(location, apiURL, "", 1)
 
-	return body, err
+	return body, location, err
 }
 
 func (client *Client) put(path string, requestBody interface{}) error {
@@ -120,7 +122,7 @@ func (client *Client) put(path string, requestBody interface{}) error {
 		return err
 	}
 
-	_, err = client.sendRequest(request)
+	_, _, err = client.sendRequest(request)
 
 	return err
 }
@@ -143,7 +145,7 @@ func (client *Client) delete(path string, requestBody interface{}) error {
 		return err
 	}
 
-	_, err = client.sendRequest(request)
+	_, _, err = client.sendRequest(request)
 
 	return err
 }

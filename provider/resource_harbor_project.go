@@ -34,8 +34,6 @@ func resourceProject() *schema.Resource {
 }
 
 func setProjectData(d *schema.ResourceData, project *harbor.Project) error {
-	d.SetId(project.Name)
-
 	err := d.Set("project_id", project.ProjectID)
 	if err != nil {
 		return err
@@ -53,8 +51,8 @@ func setProjectData(d *schema.ResourceData, project *harbor.Project) error {
 
 func resourceProjectRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
-	projectName := d.Get("name").(string)
-	project, err := client.GetProject(projectName)
+	projectID := d.Id()
+	project, err := client.GetProject(projectID)
 	if err != nil {
 		return err
 	}
@@ -72,11 +70,12 @@ func resourceProjectCreate(d *schema.ResourceData, meta interface{}) error {
 		},
 	}
 
-	err := client.NewProject(project)
+	location, err := client.NewProject(project)
 	if err != nil {
 		return err
 	}
 
+	d.SetId(location)
 	return resourceProjectRead(d, meta)
 }
 

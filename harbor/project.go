@@ -35,24 +35,24 @@ type ProjectMetadata struct {
 	PreventVul           string `json:"prevent_vul,omitempty"`
 }
 
-func (client *Client) GetProject(name string) (*Project, error) {
-	var projects []Project
+func (client *Client) GetProject(ID string) (*Project, error) {
+	var project *Project
 
-	err := client.get("/projects", &projects, map[string]string{"name": name})
+	err := client.get(ID, &project, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return &projects[0], nil
+	return project, nil
 }
 
-func (client *Client) NewProject(project *ProjectReq) error {
-	_, err := client.post("/projects", project)
+func (client *Client) NewProject(project *ProjectReq) (string, error) {
+	_, location, err := client.post("/projects", project)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return location, nil
 }
 
 func (client *Client) UpdateProject(projectID string, project *ProjectReq) error {
