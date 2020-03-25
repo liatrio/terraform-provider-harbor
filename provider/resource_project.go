@@ -36,7 +36,7 @@ func resourceProject() *schema.Resource {
 func setProjectData(d *schema.ResourceData, project *harbor.Project) error {
 	d.SetId(project.Name)
 
-	err := d.Set("project_id", project.ProjectId)
+	err := d.Set("project_id", project.ProjectID)
 	if err != nil {
 		return err
 	}
@@ -90,9 +90,9 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 		},
 	}
 
-	projectId := strconv.Itoa(d.Get("project_id").(int))
+	projectID := strconv.Itoa(d.Get("project_id").(int))
 
-	err := client.UpdateProject(projectId, project)
+	err := client.UpdateProject(projectID, project)
 	if err != nil {
 		return err
 	}
@@ -103,9 +103,9 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
 
-	projectId := strconv.Itoa(d.Get("project_id").(int))
+	projectID := strconv.Itoa(d.Get("project_id").(int))
 
-	err := client.DeleteProject(projectId)
+	err := client.DeleteProject(projectID)
 	if err != nil {
 		return err
 	}

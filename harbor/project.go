@@ -15,12 +15,12 @@ type Project struct {
 	OwnerName          string  `json:"owner_name"`
 	Name               string  `json:"name"`
 	Deleted            bool    `json:"deleted"`
-	OwnerId            int32   `json:"owner_id"`
+	OwnerID            int32   `json:"owner_id"`
 	RepoCount          int     `json:"repo_count"`
 	CreationTime       string  `json:"creation_time"`
 	Togglable          bool    `json:"togglable"`
-	ProjectId          int32   `json:"project_id"`
-	CurrentUserRoleIds []int32 `json:"current_user_role_ids"`
+	ProjectID          int32   `json:"project_id"`
+	CurrentUserRoleIDs []int32 `json:"current_user_role_ids"`
 	ChartCount         int     `json:"chart_count"`
 	// CVEWhitelist `json:"cve_whitelist"`
 	Metadata ProjectMetadata `json:"metadata"`
@@ -55,10 +55,10 @@ func (client *Client) NewProject(project *ProjectReq) error {
 	return nil
 }
 
-func (client *Client) UpdateProject(projectId string, project *ProjectReq) error {
-	return client.put(fmt.Sprintf("/projects/%s", projectId), project)
+func (client *Client) UpdateProject(projectID string, project *ProjectReq) error {
+	return client.put(fmt.Sprintf("/projects/%s", projectID), project)
 }
 
-func (client *Client) DeleteProject(projectId string) error {
-	return client.delete(fmt.Sprintf("/projects/%s", projectId), nil)
+func (client *Client) DeleteProject(projectID string) error {
+	return client.delete(fmt.Sprintf("/projects/%s", projectID), nil)
 }
