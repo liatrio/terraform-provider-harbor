@@ -1,5 +1,5 @@
 builds:
-- binary: {{.ProjectName}}_v{{.Version}}
+- binary: terraform-provider-harbor_v{{.Version}}
   env:
   - CGO_ENABLED=0
   goos:
