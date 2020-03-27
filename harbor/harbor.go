@@ -62,7 +62,10 @@ func (client *Client) sendRequest(request *http.Request) ([]byte, string, error)
 		}
 
 		requestBodyBuffer := new(bytes.Buffer)
-		requestBodyBuffer.ReadFrom(requestBody)
+		_, err = requestBodyBuffer.ReadFrom(requestBody)
+		if err != nil {
+			return nil, "", err
+		}
 
 		log.Printf("[DEBUG] Request body: %s", requestBodyBuffer.String())
 	}

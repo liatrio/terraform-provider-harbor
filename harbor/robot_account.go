@@ -32,8 +32,8 @@ type RobotAccount struct {
 }
 
 type RobotAccountAccess struct {
-	Action   string `json:"action",omitempty`
-	Resource string `json:"resource",omitempty`
+	Action   string `json:"action,omitempty"`
+	Resource string `json:"resource,omitempty"`
 }
 
 func (client *Client) GetRobotAccount(id string) (*RobotAccount, error) {

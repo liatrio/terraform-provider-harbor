@@ -73,9 +73,18 @@ func resourceRobotAccountRead(d *schema.ResourceData, meta interface{}) error {
 		return handleNotFoundError(err, d)
 	}
 
-	d.Set("name", robot.Name)
-	d.Set("description", robot.Description)
-	d.Set("disabled", robot.Disabled)
+	err = d.Set("name", robot.Name)
+	if err != nil {
+		return err
+	}
+	err = d.Set("description", robot.Description)
+	if err != nil {
+		return err
+	}
+	err = d.Set("disabled", robot.Disabled)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -100,15 +109,21 @@ func resourceRobotAccountCreate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	d.SetId(location)
-	d.Set("token", body.Token)
-	d.Set("name", body.Name)
+	err = d.Set("token", body.Token)
+	if err != nil {
+		return err
+	}
+	err = d.Set("name", body.Name)
+	if err != nil {
+		return err
+	}
 
 	return resourceRobotAccountRead(d, meta)
 }
 
-func getRobotAccountAccessFromData(projectId string, data []interface{}) *[]harbor.RobotAccountAccess {
-	var accessList []harbor.RobotAccountAccess
-	resourcePrefix := strings.Replace(projectId, "projects", "project", 1)
+func getRobotAccountAccessFromData(projectID string, data []interface{}) *[]harbor.RobotAccountAccess {
+	accessList := make([]harbor.RobotAccountAccess, 0, len(data))
+	resourcePrefix := strings.Replace(projectID, "projects", "project", 1)
 	for _, d := range data {
 		accessData := d.(map[string]interface{})
 		access := harbor.RobotAccountAccess{}

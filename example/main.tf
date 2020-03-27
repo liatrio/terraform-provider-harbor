@@ -16,3 +16,4 @@ resource "harbor_robot_account" "robot" {
     action = "pull"
   }
 }
+
