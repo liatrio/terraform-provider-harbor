@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strings"
 )
@@ -46,6 +48,33 @@ func NewClient(baseURL string, username string, password string, tlsInsecureSkip
 func (client *Client) sendRequest(request *http.Request) ([]byte, string, error) {
 	request.SetBasicAuth(client.username, client.password)
 	request.Header.Add("Content-Type", "application/json")
+
+	requestMethod := request.Method
+	requestPath := request.URL.Path
+
+	log.Printf("[DEBUG] Sending %s to %s", requestMethod, requestPath)
+	showBody := false
+	if request.Body != nil {
+		showBody = true
+		requestBody, err := request.GetBody()
+		if err != nil {
+			return nil, "", err
+		}
+
+		requestBodyBuffer := new(bytes.Buffer)
+		_, err = requestBodyBuffer.ReadFrom(requestBody)
+		if err != nil {
+			return nil, "", err
+		}
+
+		log.Printf("[DEBUG] Request body: %s", requestBodyBuffer.String())
+	}
+
+	dump, err := httputil.DumpRequest(request, showBody)
+	if err != nil {
+		return nil, "", err
+	}
+	log.Printf("[DEBUG] %s", dump)
 
 	response, err := client.httpClient.Do(request)
 	if err != nil {

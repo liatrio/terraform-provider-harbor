@@ -9,8 +9,8 @@ import (
 func New() terraform.ResourceProvider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			"harbor_project": resourceProject(),
-			//"harbor_robot_account": resourceRobotAccount(),
+			"harbor_project":       resourceProject(),
+			"harbor_robot_account": resourceRobotAccount(),
 		},
 		Schema: map[string]*schema.Schema{
 			"url": {

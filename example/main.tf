@@ -4,6 +4,16 @@ provider "harbor" {
   password = ""
 }
 
-resource "harbor_project" "example" {
-  name = "example"
+resource "harbor_project" "project" {
+  name = "project"
 }
+
+resource "harbor_robot_account" "robot" {
+  name = "robot$robot"
+  project_id = harbor_project.project.id
+  robot_account_access {
+    resource = "image"
+    action = "pull"
+  }
+}
+
