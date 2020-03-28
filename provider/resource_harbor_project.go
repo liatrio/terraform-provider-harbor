@@ -1,7 +1,11 @@
 package provider
 
 import (
+	"regexp"
+	"strconv"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
@@ -14,33 +18,48 @@ func resourceProject() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Description: "Display name of the project.",
+				Required:    true,
+				ForceNew:    true,
+				ValidateFunc: validation.All(
+					validation.StringMatch(
+						regexp.MustCompile(`^[a-z0-9]([a-z0-9_.-]*[a-z0-9])?$`),
+						"validation error:  project name should use lower case characters, numbers and ._- and must start and end with characters or numbers. '",
+					),
+					validation.StringLenBetween(1, 255),
+				),
 			},
 			"public": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "true",
-			},
-
-			"project_id": {
-				Type:     schema.TypeInt,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Description: "When true, anyone has read permissions to repositories under this project.",
+				Optional:    true,
+				Default:     false,
 			},
 		},
 	}
 }
 
-func setProjectData(d *schema.ResourceData, project *harbor.Project) error {
-	err := d.Set("project_id", project.ProjectID)
+func mapDataToProjectReq(d *schema.ResourceData, project *harbor.ProjectReq) error {
+	project.ProjectName = d.Get("name").(string)
+
+	project.Metadata = harbor.ProjectMetadata{
+		Public: strconv.FormatBool(d.Get("public").(bool)),
+	}
+
+	return nil
+}
+
+func mapProjectToData(d *schema.ResourceData, project *harbor.Project) error {
+	err := d.Set("name", project.Name)
 	if err != nil {
 		return err
 	}
-	err = d.Set("name", project.Name)
+	public, err := strconv.ParseBool(project.Metadata.Public)
 	if err != nil {
 		return err
 	}
-	err = d.Set("public", project.Metadata.Public)
+	err = d.Set("public", public)
 	if err != nil {
 		return err
 	}
@@ -55,17 +74,16 @@ func resourceProjectRead(d *schema.ResourceData, meta interface{}) error {
 		return handleNotFoundError(err, d)
 	}
 
-	return setProjectData(d, project)
+	return mapProjectToData(d, project)
 }
 
 func resourceProjectCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
 
-	project := &harbor.ProjectReq{
-		ProjectName: d.Get("name").(string),
-		Metadata: harbor.ProjectMetadata{
-			Public: d.Get("public").(string),
-		},
+	project := &harbor.ProjectReq{}
+	err := mapDataToProjectReq(d, project)
+	if err != nil {
+		return err
 	}
 
 	location, err := client.NewProject(project)
@@ -80,16 +98,13 @@ func resourceProjectCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
 
-	project := &harbor.ProjectReq{
-		ProjectName: d.Get("name").(string),
-		Metadata: harbor.ProjectMetadata{
-			Public: d.Get("public").(string),
-		},
+	project := &harbor.ProjectReq{}
+	err := mapDataToProjectReq(d, project)
+	if err != nil {
+		return err
 	}
 
-	projectID := d.Id()
-
-	err := client.UpdateProject(projectID, project)
+	err = client.UpdateProject(d.Id(), project)
 	if err != nil {
 		return err
 	}
@@ -100,9 +115,7 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
 
-	projectID := d.Id()
-
-	err := client.DeleteProject(projectID)
+	err := client.DeleteProject(d.Id())
 	if err != nil {
 		return err
 	}

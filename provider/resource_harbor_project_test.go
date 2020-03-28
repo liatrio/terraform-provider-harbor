@@ -106,7 +106,7 @@ func testAccCheckHarborProjectDestroy() resource.TestCheckFunc {
 
 			group, _ := client.GetProject(id)
 			if group != nil {
-				return fmt.Errorf("group with id %s still exists", id)
+				return fmt.Errorf("project with id %s still exists", id)
 			}
 		}
 
