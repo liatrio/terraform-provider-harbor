@@ -1,7 +1,16 @@
-read -p 'HarborURL: ' urlvar
-read -p 'Username: ' uservar
-read -sp 'Password: ' passvar
+if [ -z "$HARBOR_URL" ]; then
+  read -p 'HarborURL: ' HARBOR_URL
+fi
+if [ -z "$HARBOR_USERNAME" ]; then
+  read -p 'Username: ' HARBOR_USERNAME
+fi
+if [ -z "$HARBOR_PASSWORD" ]; then
+  read -sp 'Password: ' HARBOR_PASSWORD
+fi
 echo ''
 
+export HARBOR_URL
+export HARBOR_USERNAME
+export HARBOR_PASSWORD
 
-HARBOR_URL=$urlvar HARBOR_USERNAME=$uservar HARBOR_PASSWORD=$passvar TF_ACC=1 go test -timeout 20m $(go list ./... | grep -v 'vendor') -v
+TF_ACC=1 go test -timeout 20m $(go list ./... | grep -v 'vendor') -v

@@ -10,17 +10,18 @@ import (
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
-func TestAccHarborProjectBasic(t *testing.T) {
+func TestAccHarborRobotAccountBasic(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
+	robotName := "robot$terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testAccCheckHarborProjectDestroy(),
+		CheckDestroy: testAccCheckHarborRobotAccountDestroy(),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, "true"),
-				Check:  testAccCheckHarborProjectExists("harbor_project.project"),
+				Config: testHarborRobotAccountBasic(projectName, robotName, "false"),
+				Check:  testAccCheckHarborRobotAccountExists("harbor_robot_account.robot"),
 			},
 			//		{
 			//			ResourceName:        "keycloak_group.group",
@@ -32,41 +33,51 @@ func TestAccHarborProjectBasic(t *testing.T) {
 	})
 }
 
-func TestAccHarborProjectUpdate(t *testing.T) {
+func TestAccHarborRobotAccountUpdate(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
+	robotName := "robot$terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testAccCheckHarborProjectDestroy(),
+		CheckDestroy: testAccCheckHarborRobotAccountDestroy(),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, "true"),
-				Check:  testAccCheckHarborProjectExists("harbor_project.project"),
+				Config: testHarborRobotAccountBasic(projectName, robotName, "false"),
+				Check:  testAccCheckHarborRobotAccountExists("harbor_robot_account.robot"),
 			},
 			{
-				Config: testHarborProjectBasic(projectName, "false"),
+				Config: testHarborRobotAccountBasic(projectName, robotName, "true"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckHarborProjectExists("harbor_project.project"),
-					resource.TestCheckResourceAttr("harbor_project.project", "public", "false"),
+					testAccCheckHarborProjectExists("harbor_robot_account.robot"),
+					resource.TestCheckResourceAttr("harbor_robot_account.robot", "disabled", "true"),
 				),
 			},
 		},
 	})
 }
 
-func testHarborProjectBasic(projectName string, public string) string {
+func testHarborRobotAccountBasic(projectName string, robotName string, disabled string) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
 	name     = "%s"
-	public   = "%s"
-}
-	`, projectName, public)
 }
 
-func testAccCheckHarborProjectExists(resourceName string) resource.TestCheckFunc {
+resource "harbor_robot_account" "robot" {
+	name = "%s"
+	project_id = harbor_project.project.id
+	disabled = %s
+	access {
+		resource = "image"
+		action = "pull"
+	}
+}
+	`, projectName, robotName, disabled)
+}
+
+func testAccCheckHarborRobotAccountExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		_, err := getProjectFromState(s, resourceName)
+		_, err := getRobotAccountFromState(s, resourceName)
 		if err != nil {
 			return err
 		}
@@ -75,7 +86,7 @@ func testAccCheckHarborProjectExists(resourceName string) resource.TestCheckFunc
 	}
 }
 
-func getProjectFromState(s *terraform.State, resourceName string) (*harbor.Project, error) {
+func getRobotAccountFromState(s *terraform.State, resourceName string) (*harbor.RobotAccount, error) {
 	client := testAccProvider.Meta().(*harbor.Client)
 
 	rs, ok := s.RootModule().Resources[resourceName]
@@ -85,7 +96,7 @@ func getProjectFromState(s *terraform.State, resourceName string) (*harbor.Proje
 
 	id := rs.Primary.ID
 
-	project, err := client.GetProject(id)
+	project, err := client.GetRobotAccount(id)
 	if err != nil {
 		return nil, fmt.Errorf("error getting group with id %s: %s", id, err)
 	}
@@ -93,10 +104,10 @@ func getProjectFromState(s *terraform.State, resourceName string) (*harbor.Proje
 	return project, nil
 }
 
-func testAccCheckHarborProjectDestroy() resource.TestCheckFunc {
+func testAccCheckHarborRobotAccountDestroy() resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
-			if rs.Type != "harbor_project" {
+			if rs.Type != "harbor_robot_account" {
 				continue
 			}
 
@@ -104,9 +115,9 @@ func testAccCheckHarborProjectDestroy() resource.TestCheckFunc {
 
 			client := testAccProvider.Meta().(*harbor.Client)
 
-			group, _ := client.GetProject(id)
+			group, _ := client.GetRobotAccount(id)
 			if group != nil {
-				return fmt.Errorf("project with id %s still exists", id)
+				return fmt.Errorf("robot account with id %s still exists", id)
 			}
 		}
 
