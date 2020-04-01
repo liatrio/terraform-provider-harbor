@@ -100,6 +100,7 @@ func (client *Client) sendRequest(request *http.Request) ([]byte, string, error)
 
 func (client *Client) get(path string, resource interface{}, params map[string]string) error {
 	resourceURL := client.baseURL + apiURL + path
+	log.Printf("[DEBUG] TTTTTTTTTTTT: baseURL: %s, apiURL: %s, path: %s", client.baseURL, apiURL, path)
 
 	request, err := http.NewRequest(http.MethodGet, resourceURL, nil)
 	if err != nil {
@@ -161,6 +162,7 @@ func (client *Client) put(path string, requestBody interface{}) error {
 
 func (client *Client) delete(path string, requestBody interface{}) error {
 	resourceURL := client.baseURL + apiURL + path
+	log.Printf("[DEBUG] XXXXXXXXXXX: baseURL: %s, apiURL: %s, path: %s", client.baseURL, apiURL, path)
 
 	var body io.Reader
 

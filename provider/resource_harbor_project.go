@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"log"
 	"regexp"
 	"strconv"
 
@@ -36,6 +37,11 @@ func resourceProject() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 			},
+			"projectid": {
+				Type:      schema.TypeString,
+				Computed:  true,
+				Sensitive: false,
+			},
 		},
 	}
 }
@@ -60,6 +66,10 @@ func mapProjectToData(d *schema.ResourceData, project *harbor.Project) error {
 		return err
 	}
 	err = d.Set("public", public)
+	if err != nil {
+		return err
+	}
+	err = d.Set("projectid", strconv.Itoa(int(project.ProjectID)))
 	if err != nil {
 		return err
 	}
@@ -113,9 +123,20 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[DEBUG] RESOURCE PROJECT DELETE")
 	client := meta.(*harbor.Client)
 
-	err := client.DeleteProject(d.Id())
+	repos, err := client.GetRepositories(d.Get("projectid").(string))
+	if err != nil {
+		return err
+	}
+
+	err = client.DeleteRepositories(repos)
+	if err != nil {
+		return err
+	}
+
+	err = client.DeleteProject(d.Id())
 	if err != nil {
 		return err
 	}
