@@ -27,6 +27,10 @@ func (client *Client) GetRepositories(id string) ([]*Repository, error) {
 	return repositories, nil
 }
 
+func (client *Client) DeleteRepository(id string) error {
+	return client.delete(fmt.Sprintf("/repositories/%s", id), nil)
+}
+
 func (client *Client) DeleteRepositories(repos []*Repository) error {
 	for _, repo := range repos {
 		err := client.DeleteRepository(repo.Name)
@@ -35,8 +39,4 @@ func (client *Client) DeleteRepositories(repos []*Repository) error {
 		}
 	}
 	return nil
-}
-
-func (client *Client) DeleteRepository(id string) error {
-	return client.delete(fmt.Sprintf("/repositories/%s", id), nil)
 }
