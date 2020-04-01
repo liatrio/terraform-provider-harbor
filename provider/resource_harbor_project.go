@@ -125,6 +125,7 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] RESOURCE PROJECT DELETE")
 	client := meta.(*harbor.Client)
+	projectName := d.Get("name").(string)
 
 	repos, err := client.GetRepositories(d.Get("projectid").(string))
 	if err != nil {
@@ -132,6 +133,16 @@ func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	err = client.DeleteRepositories(repos)
+	if err != nil {
+		return err
+	}
+
+	charts, err := client.GetCharts(projectName)
+	if err != nil {
+		return err
+	}
+
+	err = client.DeleteCharts(projectName, charts)
 	if err != nil {
 		return err
 	}
