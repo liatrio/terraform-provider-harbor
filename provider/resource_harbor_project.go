@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"log"
 	"regexp"
 	"strconv"
 
@@ -123,7 +122,6 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] RESOURCE PROJECT DELETE")
 	client := meta.(*harbor.Client)
 	projectName := d.Get("name").(string)
 
