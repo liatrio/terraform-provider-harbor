@@ -116,9 +116,9 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
 	projectName := d.Get("name").(string)
-	projectId := strings.Split(d.Id(), "/")[2]
+	projectID := strings.Split(d.Id(), "/")[2]
 
-	repos, err := client.GetRepositories(projectId)
+	repos, err := client.GetRepositories(projectID)
 	if err != nil {
 		return err
 	}
