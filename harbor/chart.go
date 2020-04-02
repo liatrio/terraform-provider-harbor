@@ -2,14 +2,15 @@ package harbor
 
 import (
 	"fmt"
+	"time"
 )
 
 type Chart struct {
 	Name          string    `json:"name"`
 	TotalVersions int       `json:"total_versions"`
 	LatestVersion string    `json:"latest_version"`
-	// Created       time.Time `json:"created"`
-	// Updated       time.Time `json:"updated"`
+	Created       time.Time `json:"created"`
+	Updated       time.Time `json:"updated"`
 	Icon          string    `json:"icon"`
 	Home          string    `json:"home"`
 	Deprecated    bool      `json:"deprecated"`
