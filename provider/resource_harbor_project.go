@@ -3,6 +3,7 @@ package provider
 import (
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -36,11 +37,6 @@ func resourceProject() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 			},
-			"projectid": {
-				Type:      schema.TypeString,
-				Computed:  true,
-				Sensitive: false,
-			},
 		},
 	}
 }
@@ -65,10 +61,6 @@ func mapProjectToData(d *schema.ResourceData, project *harbor.Project) error {
 		return err
 	}
 	err = d.Set("public", public)
-	if err != nil {
-		return err
-	}
-	err = d.Set("projectid", strconv.Itoa(int(project.ProjectID)))
 	if err != nil {
 		return err
 	}
@@ -124,15 +116,18 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
 	projectName := d.Get("name").(string)
+	projectId := strings.Split(d.Id(), "/")[2]
 
-	repos, err := client.GetRepositories(d.Get("projectid").(string))
+	repos, err := client.GetRepositories(projectId)
 	if err != nil {
 		return err
 	}
 
-	err = client.DeleteRepositories(repos)
-	if err != nil {
-		return err
+	if len(repos) > 0 {
+		err = client.DeleteRepositories(repos)
+		if err != nil {
+			return err
+		}
 	}
 
 	charts, err := client.GetCharts(projectName)
@@ -140,9 +135,11 @@ func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	err = client.DeleteCharts(projectName, charts)
-	if err != nil {
-		return err
+	if len(charts) > 0 {
+		err = client.DeleteCharts(projectName, charts)
+		if err != nil {
+			return err
+		}
 	}
 
 	err = client.DeleteProject(d.Id())
