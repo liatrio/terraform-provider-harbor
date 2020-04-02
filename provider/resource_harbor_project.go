@@ -3,6 +3,7 @@ package provider
 import (
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -114,8 +115,34 @@ func resourceProjectUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*harbor.Client)
+	projectName := d.Get("name").(string)
+	projectID := strings.Split(d.Id(), "/")[2]
 
-	err := client.DeleteProject(d.Id())
+	repos, err := client.GetRepositories(projectID)
+	if err != nil {
+		return err
+	}
+
+	if len(repos) > 0 {
+		err = client.DeleteRepositories(repos)
+		if err != nil {
+			return err
+		}
+	}
+
+	charts, err := client.GetCharts(projectName)
+	if err != nil {
+		return err
+	}
+
+	if len(charts) > 0 {
+		err = client.DeleteCharts(projectName, charts)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = client.DeleteProject(d.Id())
 	if err != nil {
 		return err
 	}
