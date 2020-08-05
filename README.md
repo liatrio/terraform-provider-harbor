@@ -37,8 +37,8 @@ Examples of how to use the provider can be found under the `examples/` directory
 To run automated linting on the codebase, run the command `make lint`
 To run the automated acceptance testing on the provider, run the command `make acctest`
 and provide the following data to the provided script.
-HarborURL: The base url of the Harbor instance to test agaist. i.e. `http://localhost:8080`
-Username: The username of the user to run acceptance tests as.
-Password: The passwrod of the user to run acceptance tests as.
+- HarborURL: The base url of the Harbor instance to test against. e.g. `http://localhost:8080`
+- Username: The username of the user to run acceptance tests as.
+- Password: The password of the user to run acceptance tests as.
 *Note:* Acceptance tests create real resources, and often cost money to run.
 
