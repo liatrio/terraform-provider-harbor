@@ -120,7 +120,7 @@ func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 
 	repos, err := client.GetRepositories(projectID)
 	if err != nil {
-		return err
+		return handleNotFoundError(err, d)
 	}
 
 	if len(repos) > 0 {
@@ -132,7 +132,7 @@ func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 
 	charts, err := client.GetCharts(projectName)
 	if err != nil {
-		return err
+		return handleNotFoundError(err, d)
 	}
 
 	if len(charts) > 0 {
@@ -144,7 +144,7 @@ func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 
 	err = client.DeleteProject(d.Id())
 	if err != nil {
-		return err
+		return handleNotFoundError(err, d)
 	}
 
 	d.SetId("")

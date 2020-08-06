@@ -1,5 +1,7 @@
 LOCALDIR?=$$(pwd)
 
+.PHONY: build install lint local testacc
+
 build:
 	go build -o terraform-provider-harbor
 
