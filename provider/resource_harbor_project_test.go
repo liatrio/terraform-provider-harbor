@@ -22,12 +22,6 @@ func TestAccHarborProjectBasic(t *testing.T) {
 				Config: testHarborProjectBasic(projectName, "true"),
 				Check:  testAccCheckHarborProjectExists("harbor_project.project"),
 			},
-			//		{
-			//			ResourceName:        "keycloak_group.group",
-			//			ImportState:         true,
-			//			ImportStateVerify:   true,
-			//			ImportStateIdPrefix: realmName + "/",
-			//		},
 		},
 	})
 }
@@ -87,7 +81,7 @@ func getProjectFromState(s *terraform.State, resourceName string) (*harbor.Proje
 
 	project, err := client.GetProject(id)
 	if err != nil {
-		return nil, fmt.Errorf("error getting group with id %s: %s", id, err)
+		return nil, fmt.Errorf("error getting project with id %s: %s", id, err)
 	}
 
 	return project, nil
@@ -104,8 +98,8 @@ func testAccCheckHarborProjectDestroy() resource.TestCheckFunc {
 
 			client := testAccProvider.Meta().(*harbor.Client)
 
-			group, _ := client.GetProject(id)
-			if group != nil {
+			project, _ := client.GetProject(id)
+			if project != nil {
 				return fmt.Errorf("project with id %s still exists", id)
 			}
 		}

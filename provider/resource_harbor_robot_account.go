@@ -22,7 +22,7 @@ func resourceRobotAccount() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				Description:  "ID of the project the robot account corosponds to in the form '/projects/${ID_NUMBER}'",
+				Description:  "ID of the project the robot account corresponds to in the form '/projects/${ID_NUMBER}'",
 				ValidateFunc: validation.StringMatch(regexp.MustCompile(`^/projects/[0-9]+$`), "validation error: project_id should be of the form '/projects/${ID_NUMBER}'"),
 			},
 			"name": {
@@ -199,7 +199,7 @@ func resourceRobotAccountDelete(d *schema.ResourceData, meta interface{}) error 
 
 	err := client.DeleteRobotAccount(d.Id())
 	if err != nil {
-		return err
+		return handleNotFoundError(err, d)
 	}
 
 	d.SetId("")
