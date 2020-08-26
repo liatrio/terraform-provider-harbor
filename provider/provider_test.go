@@ -4,12 +4,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 var testAccProvider *schema.Provider
-var testAccProviders map[string]terraform.ResourceProvider
+var testAccProviders map[string]*schema.Provider
 
 var requiredEnvironmentVariables = []string{
 	"HARBOR_USERNAME",
@@ -18,8 +17,8 @@ var requiredEnvironmentVariables = []string{
 }
 
 func init() {
-	testAccProvider = New().(*schema.Provider)
-	testAccProviders = map[string]terraform.ResourceProvider{
+	testAccProvider = New()
+	testAccProviders = map[string]*schema.Provider{
 		"harbor": testAccProvider,
 	}
 }
