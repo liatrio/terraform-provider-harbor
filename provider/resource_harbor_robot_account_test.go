@@ -20,7 +20,7 @@ func TestAccHarborRobotAccountBasic(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
-				Config: testCreateHarborRobotAccount_Basic(projectName, robotName, "false"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testCheckResourceExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "token"),
@@ -41,7 +41,7 @@ func TestAccHarborRobotAccountFull(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
-				Config: testCreateHarborRobotAccount_Full(
+				Config: testCreateHarborRobotAccountFull(
 					projectName,
 					robotName,
 					"A Test Robot Account",
@@ -70,11 +70,11 @@ func TestAccHarborRobotAccountUpdate(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
-				Config: testCreateHarborRobotAccount_Basic(projectName, robotName, "false"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
 				Check:  testCheckResourceExists(resourceName),
 			},
 			{
-				Config: testCreateHarborRobotAccount_Basic(projectName, robotName, "true"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "true"),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "true"),
@@ -97,7 +97,7 @@ func TestAccHarborRobotAccountCreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
-				Config: testCreateHarborRobotAccount_Basic(projectName, robotName, "false"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testCheckResourceExists(resourceName),
 					testCheckGetResourceID(resourceName, &robotID),
@@ -112,7 +112,7 @@ func TestAccHarborRobotAccountCreateAfterManualDestroy(t *testing.T) {
 						t.Fatal(err)
 					}
 				},
-				Config: testCreateHarborRobotAccount_Basic(projectName, robotName, "true"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "true"),
 				Check:  testCheckResourceExists(resourceName),
 			},
 		},
