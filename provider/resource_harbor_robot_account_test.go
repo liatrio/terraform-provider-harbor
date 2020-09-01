@@ -9,7 +9,7 @@ import (
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
-func TestAccHarborRobotAccount_Basic(t *testing.T) {
+func TestAccHarborRobotAccountBasic(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -30,7 +30,7 @@ func TestAccHarborRobotAccount_Basic(t *testing.T) {
 	})
 }
 
-func TestAccHarborRobotAccount_Full(t *testing.T) {
+func TestAccHarborRobotAccountFull(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -59,7 +59,7 @@ func TestAccHarborRobotAccount_Full(t *testing.T) {
 	})
 }
 
-func TestAccHarborRobotAccount_Update(t *testing.T) {
+func TestAccHarborRobotAccountUpdate(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -84,8 +84,8 @@ func TestAccHarborRobotAccount_Update(t *testing.T) {
 	})
 }
 
-func TestAccHarborRobotAccount_CreateAfterManualDestroy(t *testing.T) {
-	var robotId string
+func TestAccHarborRobotAccountCreateAfterManualDestroy(t *testing.T) {
+	var robotID string
 
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
@@ -100,14 +100,14 @@ func TestAccHarborRobotAccount_CreateAfterManualDestroy(t *testing.T) {
 				Config: testCreateHarborRobotAccount_Basic(projectName, robotName, "false"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testCheckResourceExists(resourceName),
-					testCheckGetResourceId(resourceName, &robotId),
+					testCheckGetResourceID(resourceName, &robotID),
 				),
 			},
 			{
 				PreConfig: func() {
 					client := testAccProvider.Meta().(*harbor.Client)
 
-					err := client.DeleteRobotAccount(robotId)
+					err := client.DeleteRobotAccount(robotID)
 					if err != nil {
 						t.Fatal(err)
 					}
@@ -119,7 +119,7 @@ func TestAccHarborRobotAccount_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func testCreateHarborRobotAccount_Basic(projectName string, robotName string, disabled string) string {
+func testCreateHarborRobotAccountBasic(projectName string, robotName string, disabled string) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
 	name     = "%s"
@@ -137,7 +137,7 @@ resource "harbor_robot_account" "robot" {
 	`, projectName, robotName, disabled)
 }
 
-func testCreateHarborRobotAccount_Full(projectName string, robotName string, description string, disabled string) string {
+func testCreateHarborRobotAccountFull(projectName string, robotName string, description string, disabled string) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
 	name     = "%s"

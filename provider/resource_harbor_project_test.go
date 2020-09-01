@@ -9,7 +9,7 @@ import (
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
-func TestAccHarborProject_Basic(t *testing.T) {
+func TestAccHarborProjectBasic(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -25,7 +25,7 @@ func TestAccHarborProject_Basic(t *testing.T) {
 	})
 }
 
-func TestAccHarborProject_Update(t *testing.T) {
+func TestAccHarborProjectUpdate(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -48,7 +48,7 @@ func TestAccHarborProject_Update(t *testing.T) {
 	})
 }
 
-func TestAccHarborProject_CreateAfterManualDestroy(t *testing.T) {
+func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 	var projectID string
 
 	projectName := "terraform-" + acctest.RandString(10)
@@ -62,7 +62,7 @@ func TestAccHarborProject_CreateAfterManualDestroy(t *testing.T) {
 				Config: testHarborProjectBasic(projectName, "false"),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceExists("harbor_project.project"),
-					testCheckGetResourceId("harbor_project.project", &projectID),
+					testCheckGetResourceID("harbor_project.project", &projectID),
 				),
 			},
 			{

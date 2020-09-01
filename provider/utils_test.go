@@ -17,25 +17,25 @@ func testCheckResourceExists(resourceName string) resource.TestCheckFunc {
 			return fmt.Errorf("resource not found: %s", resourceName)
 		}
 
-		resourceId := rs.Primary.ID
+		resourceID := rs.Primary.ID
 
-		_, err := client.GetResource(resourceId)
+		_, err := client.GetResource(resourceID)
 		if err != nil {
-			return fmt.Errorf("error getting project with id %s: %s", resourceId, err)
+			return fmt.Errorf("error getting project with id %s: %s", resourceID, err)
 		}
 
 		return nil
 	}
 }
 
-func testCheckGetResourceId(resourceName string, resourceId *string) resource.TestCheckFunc {
+func testCheckGetResourceID(resourceName string, resourceID *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return fmt.Errorf("resource not found: %s", resourceName)
 		}
 
-		*resourceId = rs.Primary.ID
+		*resourceID = rs.Primary.ID
 
 		return nil
 	}
