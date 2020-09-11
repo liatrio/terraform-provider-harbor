@@ -6,29 +6,55 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
 func TestAccHarborRobotAccountBasic(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
+	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testAccCheckHarborRobotAccountDestroy(),
+		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborRobotAccountBasic(projectName, robotName, "false"),
-				Check:  testAccCheckHarborRobotAccountExists("harbor_robot_account.robot"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testCheckResourceExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "token"),
+				),
 			},
-			//		{
-			//			ResourceName:        "keycloak_group.group",
-			//			ImportState:         true,
-			//			ImportStateVerify:   true,
-			//			ImportStateIdPrefix: realmName + "/",
-			//		},
+		},
+	})
+}
+
+func TestAccHarborRobotAccountFull(t *testing.T) {
+	projectName := "terraform-" + acctest.RandString(10)
+	robotName := "robot$terraform-" + acctest.RandString(10)
+	resourceName := "harbor_robot_account.robot"
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		Steps: []resource.TestStep{
+			{
+				Config: testCreateHarborRobotAccountFull(
+					projectName,
+					robotName,
+					"A Test Robot Account",
+					"true",
+				),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testCheckResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", robotName),
+					resource.TestCheckResourceAttr(resourceName, "description", "A Test Robot Account"),
+					resource.TestCheckResourceAttr(resourceName, "disabled", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "token"),
+				),
+			},
 		},
 	})
 }
@@ -36,28 +62,64 @@ func TestAccHarborRobotAccountBasic(t *testing.T) {
 func TestAccHarborRobotAccountUpdate(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
+	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testAccCheckHarborRobotAccountDestroy(),
+		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborRobotAccountBasic(projectName, robotName, "false"),
-				Check:  testAccCheckHarborRobotAccountExists("harbor_robot_account.robot"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
+				Check:  testCheckResourceExists(resourceName),
 			},
 			{
-				Config: testHarborRobotAccountBasic(projectName, robotName, "true"),
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "true"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckHarborProjectExists("harbor_robot_account.robot"),
-					resource.TestCheckResourceAttr("harbor_robot_account.robot", "disabled", "true"),
+					testCheckResourceExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "disabled", "true"),
 				),
 			},
 		},
 	})
 }
 
-func testHarborRobotAccountBasic(projectName string, robotName string, disabled string) string {
+func TestAccHarborRobotAccountCreateAfterManualDestroy(t *testing.T) {
+	var robotID string
+
+	projectName := "terraform-" + acctest.RandString(10)
+	robotName := "robot$terraform-" + acctest.RandString(10)
+	resourceName := "harbor_robot_account.robot"
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		Steps: []resource.TestStep{
+			{
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testCheckResourceExists(resourceName),
+					testCheckGetResourceID(resourceName, &robotID),
+				),
+			},
+			{
+				PreConfig: func() {
+					client := testAccProvider.Meta().(*harbor.Client)
+
+					err := client.DeleteRobotAccount(robotID)
+					if err != nil {
+						t.Fatal(err)
+					}
+				},
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "true"),
+				Check:  testCheckResourceExists(resourceName),
+			},
+		},
+	})
+}
+
+func testCreateHarborRobotAccountBasic(projectName string, robotName string, disabled string) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
 	name     = "%s"
@@ -75,52 +137,34 @@ resource "harbor_robot_account" "robot" {
 	`, projectName, robotName, disabled)
 }
 
-func testAccCheckHarborRobotAccountExists(resourceName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		_, err := getRobotAccountFromState(s, resourceName)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
+func testCreateHarborRobotAccountFull(projectName string, robotName string, description string, disabled string) string {
+	return fmt.Sprintf(`
+resource "harbor_project" "project" {
+	name     = "%s"
 }
 
-func getRobotAccountFromState(s *terraform.State, resourceName string) (*harbor.RobotAccount, error) {
-	client := testAccProvider.Meta().(*harbor.Client)
+resource "harbor_robot_account" "robot" {
+	project_id = harbor_project.project.id
 
-	rs, ok := s.RootModule().Resources[resourceName]
-	if !ok {
-		return nil, fmt.Errorf("resource not found: %s", resourceName)
+	name = "%s"
+	description = "%s"
+	disabled = %s
+	access {
+		resource = "image"
+		action = "pull"
 	}
-
-	id := rs.Primary.ID
-
-	project, err := client.GetRobotAccount(id)
-	if err != nil {
-		return nil, fmt.Errorf("error getting group with id %s: %s", id, err)
+	access {
+		resource = "image"
+		action = "push"
 	}
-
-	return project, nil
+	access {
+		resource = "helm-chart"
+		action = "pull"
+	}
+	access {
+		resource = "helm-chart"
+		action = "push"
+	}
 }
-
-func testAccCheckHarborRobotAccountDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != "harbor_robot_account" {
-				continue
-			}
-
-			id := rs.Primary.ID
-
-			client := testAccProvider.Meta().(*harbor.Client)
-
-			group, _ := client.GetRobotAccount(id)
-			if group != nil {
-				return fmt.Errorf("robot account with id %s still exists", id)
-			}
-		}
-
-		return nil
-	}
+	`, projectName, robotName, description, disabled)
 }

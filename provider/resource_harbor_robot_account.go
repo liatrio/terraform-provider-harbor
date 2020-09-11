@@ -177,7 +177,7 @@ func resourceRobotAccountCreate(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	return resourceRobotAccountRead(d, meta)
+	return resourceRobotAccountUpdate(d, meta)
 }
 
 func resourceRobotAccountUpdate(d *schema.ResourceData, meta interface{}) error {

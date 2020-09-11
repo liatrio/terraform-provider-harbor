@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
@@ -16,11 +15,11 @@ func TestAccHarborProjectBasic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testAccCheckHarborProjectDestroy(),
+		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, "true"),
-				Check:  testAccCheckHarborProjectExists("harbor_project.project"),
+				Config: testHarborProjectBasic(projectName, "false"),
+				Check:  testCheckResourceExists("harbor_project.project"),
 			},
 		},
 	})
@@ -32,18 +31,51 @@ func TestAccHarborProjectUpdate(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testAccCheckHarborProjectDestroy(),
+		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, "true"),
-				Check:  testAccCheckHarborProjectExists("harbor_project.project"),
+				Config: testHarborProjectBasic(projectName, "false"),
+				Check:  testCheckResourceExists("harbor_project.project"),
 			},
+			{
+				Config: testHarborProjectBasic(projectName, "true"),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceExists("harbor_project.project"),
+					resource.TestCheckResourceAttr("harbor_project.project", "public", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
+	var projectID string
+
+	projectName := "terraform-" + acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		Steps: []resource.TestStep{
 			{
 				Config: testHarborProjectBasic(projectName, "false"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckHarborProjectExists("harbor_project.project"),
-					resource.TestCheckResourceAttr("harbor_project.project", "public", "false"),
+					testCheckResourceExists("harbor_project.project"),
+					testCheckGetResourceID("harbor_project.project", &projectID),
 				),
+			},
+			{
+				PreConfig: func() {
+					client := testAccProvider.Meta().(*harbor.Client)
+
+					err := client.DeleteProject(projectID)
+					if err != nil {
+						t.Fatal(err)
+					}
+				},
+				Config: testHarborProjectBasic(projectName, "true"),
+				Check:  testCheckResourceExists("harbor_project.project"),
 			},
 		},
 	})
@@ -56,54 +88,4 @@ resource "harbor_project" "project" {
 	public   = "%s"
 }
 	`, projectName, public)
-}
-
-func testAccCheckHarborProjectExists(resourceName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		_, err := getProjectFromState(s, resourceName)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
-}
-
-func getProjectFromState(s *terraform.State, resourceName string) (*harbor.Project, error) {
-	client := testAccProvider.Meta().(*harbor.Client)
-
-	rs, ok := s.RootModule().Resources[resourceName]
-	if !ok {
-		return nil, fmt.Errorf("resource not found: %s", resourceName)
-	}
-
-	id := rs.Primary.ID
-
-	project, err := client.GetProject(id)
-	if err != nil {
-		return nil, fmt.Errorf("error getting project with id %s: %s", id, err)
-	}
-
-	return project, nil
-}
-
-func testAccCheckHarborProjectDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != "harbor_project" {
-				continue
-			}
-
-			id := rs.Primary.ID
-
-			client := testAccProvider.Meta().(*harbor.Client)
-
-			project, _ := client.GetProject(id)
-			if project != nil {
-				return fmt.Errorf("project with id %s still exists", id)
-			}
-		}
-
-		return nil
-	}
 }
