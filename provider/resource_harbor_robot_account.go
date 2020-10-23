@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"time"
 	"regexp"
 	"strings"
 
@@ -155,6 +156,14 @@ func resourceRobotAccountRead(d *schema.ResourceData, meta interface{}) error {
 	robot, err := client.GetRobotAccount(d.Id())
 	if err != nil {
 		return handleNotFoundError(err, d)
+	}
+	if int(time.Now().Unix()) >= robot.ExpiresAt {
+		err = client.DeleteRobotAccount(d.Id())
+		if err != nil {
+			return err
+		}
+		d.SetId("")
+		return nil
 	}
 
 	return mapRobotAccountToData(d, robot)
