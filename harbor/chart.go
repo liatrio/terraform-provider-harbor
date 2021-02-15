@@ -18,7 +18,7 @@ type Chart struct {
 
 func (client *Client) GetCharts(id string) ([]*Chart, error) {
 	var charts []*Chart
-	err := client.get(fmt.Sprintf("/chartrepo/%s/charts", id), &charts, nil)
+	err := client.get(ApiURLVersion1, fmt.Sprintf("/chartrepo/%s/charts", id), &charts, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (client *Client) GetCharts(id string) ([]*Chart, error) {
 }
 
 func (client *Client) DeleteChart(project string, chart string) error {
-	return client.delete(fmt.Sprintf("/chartrepo/%s/charts/%s", project, chart), nil)
+	return client.delete(ApiURLVersion1, fmt.Sprintf("/chartrepo/%s/charts/%s", project, chart), nil)
 }
 
 func (client *Client) DeleteCharts(project string, charts []*Chart) error {

@@ -22,7 +22,8 @@ type Client struct {
 }
 
 const (
-	apiURL = "/api"
+	ApiURLVersion1 = "/api"
+	ApiURLVersion2 = "/api/v2.0"
 )
 
 func NewClient(baseURL string, username string, password string, tlsInsecureSkipVerify bool) (*Client, error) {
@@ -98,7 +99,7 @@ func (client *Client) sendRequest(request *http.Request) ([]byte, string, error)
 	return body, response.Header.Get("Location"), nil
 }
 
-func (client *Client) get(path string, resource interface{}, params map[string]string) error {
+func (client *Client) get(apiURL string, path string, resource interface{}, params map[string]string) error {
 	resourceURL := client.baseURL + apiURL + path
 
 	request, err := http.NewRequest(http.MethodGet, resourceURL, nil)
@@ -122,7 +123,7 @@ func (client *Client) get(path string, resource interface{}, params map[string]s
 	return json.Unmarshal(body, resource)
 }
 
-func (client *Client) post(path string, requestBody interface{}) ([]byte, string, error) {
+func (client *Client) post(apiURL string, path string, requestBody interface{}) ([]byte, string, error) {
 	resourceURL := client.baseURL + apiURL + path
 
 	payload, err := json.Marshal(requestBody)
@@ -141,7 +142,7 @@ func (client *Client) post(path string, requestBody interface{}) ([]byte, string
 	return body, location, err
 }
 
-func (client *Client) put(path string, requestBody interface{}) error {
+func (client *Client) put(apiURL string, path string, requestBody interface{}) error {
 	resourceURL := client.baseURL + apiURL + path
 
 	payload, err := json.Marshal(requestBody)
@@ -159,7 +160,7 @@ func (client *Client) put(path string, requestBody interface{}) error {
 	return err
 }
 
-func (client *Client) delete(path string, requestBody interface{}) error {
+func (client *Client) delete(apiURL string, path string, requestBody interface{}) error {
 	resourceURL := client.baseURL + apiURL + path
 
 	var body io.Reader
