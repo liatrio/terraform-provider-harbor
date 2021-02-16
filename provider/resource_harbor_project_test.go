@@ -18,7 +18,7 @@ func TestAccHarborProjectBasic(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, "false"),
+				Config: testHarborProjectBasic(projectName, false, false),
 				Check:  testCheckResourceExists("harbor_project.project"),
 			},
 		},
@@ -34,11 +34,11 @@ func TestAccHarborProjectUpdate(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, "false"),
+				Config: testHarborProjectBasic(projectName, false, false),
 				Check:  testCheckResourceExists("harbor_project.project"),
 			},
 			{
-				Config: testHarborProjectBasic(projectName, "true"),
+				Config: testHarborProjectBasic(projectName, true, true),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceExists("harbor_project.project"),
 					resource.TestCheckResourceAttr("harbor_project.project", "public", "true"),
@@ -59,7 +59,7 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, "false"),
+				Config: testHarborProjectBasic(projectName, false, false),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceExists("harbor_project.project"),
 					testCheckGetResourceID("harbor_project.project", &projectID),
@@ -74,18 +74,19 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 						t.Fatal(err)
 					}
 				},
-				Config: testHarborProjectBasic(projectName, "true"),
+				Config: testHarborProjectBasic(projectName, true, true),
 				Check:  testCheckResourceExists("harbor_project.project"),
 			},
 		},
 	})
 }
 
-func testHarborProjectBasic(projectName string, public string) string {
+func testHarborProjectBasic(projectName string, public bool, auto_scan bool) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
-	name     = "%s"
-	public   = "%s"
+	name      = "%s"
+	public    = %t
+	auto_scan = %t
 }
-	`, projectName, public)
+	`, projectName, public, auto_scan)
 }
