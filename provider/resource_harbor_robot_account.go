@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -44,6 +45,13 @@ func resourceRobotAccount() *schema.Resource {
 				ForceNew:     true,
 				Description:  "A description of this robot account",
 				ValidateFunc: validation.StringLenBetween(1, 1024),
+			},
+			"expires_at": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  "Sets the time at which this robot account will expire in UTC. If this isn't set the account will never expire.",
+				ValidateFunc: validation.IsRFC3339Time,
 			},
 			"disabled": {
 				Type:        schema.TypeBool,
@@ -92,6 +100,12 @@ func mapRobotAccountToData(d *schema.ResourceData, robot *harbor.RobotAccount) e
 	if err != nil {
 		return err
 	}
+	if robot.ExpiresAt > 0 {
+		err = d.Set("expires_at", time.Unix(int64(robot.ExpiresAt), 0).UTC().Format(time.RFC3339))
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
@@ -108,13 +122,25 @@ func mapRobotAccountPostRepToData(d *schema.ResourceData, robot *harbor.RobotAcc
 	return nil
 }
 
-func mapDataToRobotAccountCreate(d *schema.ResourceData, robot *harbor.RobotAccountCreate) {
+func mapDataToRobotAccountCreate(d *schema.ResourceData, robot *harbor.RobotAccountCreate) error {
 	access := &[]harbor.RobotAccountAccess{}
 	mapDataToRobotAccountAccess(d, access)
 
 	robot.Name = strings.Replace(d.Get("name").(string), "robot$", "", 1)
 	robot.Description = d.Get("description").(string)
 	robot.Access = *access
+
+	expiresAt := d.Get("expires_at").(string)
+	if expiresAt != "" {
+		t, err := time.Parse(time.RFC3339, expiresAt)
+		if err != nil {
+			return err
+		}
+		robot.ExpiresAt = t.Unix()
+	} else {
+		robot.ExpiresAt = -1
+	}
+	return nil
 }
 
 func mapDataToRobotAccountAccess(d *schema.ResourceData, accessList *[]harbor.RobotAccountAccess) {
@@ -164,7 +190,10 @@ func resourceRobotAccountCreate(d *schema.ResourceData, meta interface{}) error 
 	client := meta.(*harbor.Client)
 	robot := &harbor.RobotAccountCreate{}
 
-	mapDataToRobotAccountCreate(d, robot)
+	err := mapDataToRobotAccountCreate(d, robot)
+	if err != nil {
+		return err
+	}
 
 	body, location, err := client.NewRobotAccount(d.Get("project_id").(string), robot)
 	if err != nil {

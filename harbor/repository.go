@@ -18,9 +18,9 @@ type Repository struct {
 	UpdateTime   time.Time     `json:"update_time"`
 }
 
-func (client *Client) GetRepositories(id string) ([]*Repository, error) {
+func (client *Client) GetRepositories(projectName string) ([]*Repository, error) {
 	var repositories []*Repository
-	err := client.get(fmt.Sprintf("/repositories?project_id=%s", id), &repositories, nil)
+	err := client.get(APIURLVersion2, fmt.Sprintf("/projects/%s/repositories", projectName), &repositories, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -28,13 +28,13 @@ func (client *Client) GetRepositories(id string) ([]*Repository, error) {
 	return repositories, nil
 }
 
-func (client *Client) DeleteRepository(id string) error {
-	return client.delete(fmt.Sprintf("/repositories/%s", id), nil)
+func (client *Client) DeleteRepository(projectName string, repoName string) error {
+	return client.delete(APIURLVersion2, fmt.Sprintf("/projects/%s/repositories/%s", projectName, repoName), nil)
 }
 
-func (client *Client) DeleteRepositories(repos []*Repository) error {
+func (client *Client) DeleteRepositories(projectName string, repos []*Repository) error {
 	for _, repo := range repos {
-		err := client.DeleteRepository(repo.Name)
+		err := client.DeleteRepository(projectName, repo.Name)
 		if err != nil {
 			return err
 		}

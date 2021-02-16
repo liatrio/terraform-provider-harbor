@@ -1,6 +1,15 @@
+terraform {
+  required_providers {
+    harbor = {
+      version = ">=0.0.0"
+      source = "terraform.local/liatrio/harbor"
+    }
+  }
+}
+
 provider "harbor" {
 // Values should be set here, or in ENV
-//  url = "http://localhost:30002"
+//  url = "http://localhost"
 //  username = ""
 //  password = ""
 }
@@ -11,7 +20,6 @@ resource "harbor_project" "project" {
 }
 
 
-
 resource "harbor_robot_account" "robot" {
   name = "robot$robot"
   project_id = harbor_project.project.id
@@ -20,4 +28,3 @@ resource "harbor_robot_account" "robot" {
     action = "pull"
   }
 }
-

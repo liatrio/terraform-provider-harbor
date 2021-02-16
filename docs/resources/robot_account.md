@@ -38,6 +38,9 @@ preform on the corrosponding resource. Supported vaules are `push` and `pull`
 Changing this forces a new resource to be created.
 * `disabled` - (Optional) If `true` this robot account is disabled and can not
 be used. Defaults to `false`
+* `expires_at` - (Optional) Denotes the date and time at which the robot account's
+authentication token will expire. Set with an RFC3339 UTC formatted string. If
+`expires_at` isn't set, the authentication token will never expire.
 
 ## Attribute Reference
 

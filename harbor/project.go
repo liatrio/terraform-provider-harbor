@@ -36,7 +36,7 @@ type ProjectMetadata struct {
 func (client *Client) GetProject(id string) (*Project, error) {
 	var project *Project
 
-	err := client.get(id, &project, nil)
+	err := client.get(APIURLVersion2, id, &project, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (client *Client) GetProject(id string) (*Project, error) {
 }
 
 func (client *Client) NewProject(project *ProjectReq) (string, error) {
-	_, location, err := client.post("/projects", project)
+	_, location, err := client.post(APIURLVersion2, "/projects", project)
 	if err != nil {
 		return "", err
 	}
@@ -54,9 +54,9 @@ func (client *Client) NewProject(project *ProjectReq) (string, error) {
 }
 
 func (client *Client) UpdateProject(id string, project *ProjectReq) error {
-	return client.put(id, project)
+	return client.put(APIURLVersion2, id, project)
 }
 
 func (client *Client) DeleteProject(id string) error {
-	return client.delete(id, nil)
+	return client.delete(APIURLVersion2, id, nil)
 }
