@@ -50,7 +50,7 @@ func resourceRobotAccount() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				Description:  "Sets the time at which this robot account will expire. If this isn't set the account will never expire.",
+				Description:  "Sets the time at which this robot account will expire in UTC. If this isn't set the account will never expire.",
 				ValidateFunc: validation.IsRFC3339Time,
 			},
 			"disabled": {
@@ -101,7 +101,7 @@ func mapRobotAccountToData(d *schema.ResourceData, robot *harbor.RobotAccount) e
 		return err
 	}
 	if robot.ExpiresAt > 0 {
-		err = d.Set("expires_at", time.Unix(int64(robot.ExpiresAt), 0).Format(time.RFC3339))
+		err = d.Set("expires_at", time.Unix(int64(robot.ExpiresAt), 0).UTC().Format(time.RFC3339))
 		if err != nil {
 			return err
 		}
