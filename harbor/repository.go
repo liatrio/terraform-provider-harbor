@@ -20,7 +20,7 @@ type Repository struct {
 
 func (client *Client) GetRepositories(projectName string) ([]*Repository, error) {
 	var repositories []*Repository
-	err := client.get(ApiURLVersion2, fmt.Sprintf("/projects/%s/repositories", projectName), &repositories, nil)
+	err := client.get(APIURLVersion2, fmt.Sprintf("/projects/%s/repositories", projectName), &repositories, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (client *Client) GetRepositories(projectName string) ([]*Repository, error)
 }
 
 func (client *Client) DeleteRepository(projectName string, repoName string) error {
-	return client.delete(ApiURLVersion2, fmt.Sprintf("/projects/%s/repositories/%s", projectName, repoName), nil)
+	return client.delete(APIURLVersion2, fmt.Sprintf("/projects/%s/repositories/%s", projectName, repoName), nil)
 }
 
 func (client *Client) DeleteRepositories(projectName string, repos []*Repository) error {

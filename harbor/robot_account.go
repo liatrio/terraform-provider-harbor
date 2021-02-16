@@ -40,7 +40,7 @@ type RobotAccountAccess struct {
 func (client *Client) GetRobotAccount(id string) (*RobotAccount, error) {
 	var robot *RobotAccount
 
-	err := client.get(ApiURLVersion2, id, &robot, nil)
+	err := client.get(APIURLVersion2, id, &robot, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (client *Client) GetRobotAccount(id string) (*RobotAccount, error) {
 }
 
 func (client *Client) NewRobotAccount(projectID string, robot *RobotAccountCreate) (*RobotAccountPostRep, string, error) {
-	body, location, err := client.post(ApiURLVersion2, fmt.Sprintf("%s/robots", projectID), robot)
+	body, location, err := client.post(APIURLVersion2, fmt.Sprintf("%s/robots", projectID), robot)
 	if err != nil {
 		return nil, "", err
 	}
@@ -65,9 +65,9 @@ func (client *Client) NewRobotAccount(projectID string, robot *RobotAccountCreat
 }
 
 func (client *Client) UpdateRobotAccount(id string, robot *RobotAccountUpdate) error {
-	return client.put(ApiURLVersion2, id, robot)
+	return client.put(APIURLVersion2, id, robot)
 }
 
 func (client *Client) DeleteRobotAccount(id string) error {
-	return client.delete(ApiURLVersion2, id, nil)
+	return client.delete(APIURLVersion2, id, nil)
 }

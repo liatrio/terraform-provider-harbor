@@ -22,8 +22,8 @@ type Client struct {
 }
 
 const (
-	ApiURLVersion1 = "/api"
-	ApiURLVersion2 = "/api/v2.0"
+	APIURLVersion1 = "/api"
+	APIURLVersion2 = "/api/v2.0"
 )
 
 func NewClient(baseURL string, username string, password string, tlsInsecureSkipVerify bool) (*Client, error) {
