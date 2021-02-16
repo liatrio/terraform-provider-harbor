@@ -46,18 +46,11 @@ func resourceRobotAccount() *schema.Resource {
 				Description:  "A description of this robot account",
 				ValidateFunc: validation.StringLenBetween(1, 1024),
 			},
-			"expires": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     true,
-				ForceNew:    true,
-				Description: "When false, this robot account's token will never expire.",
-			},
 			"expires_at": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				Description:  "Sets the time at which this robot account will expire.",
+				Description:  "Sets the time at which this robot account will expire. If this isn't set the account will never expire.",
 				ValidateFunc: validation.IsRFC3339Time,
 			},
 			"disabled": {
@@ -107,15 +100,11 @@ func mapRobotAccountToData(d *schema.ResourceData, robot *harbor.RobotAccount) e
 	if err != nil {
 		return err
 	}
-	if robot.ExpiresAt == -1 {
-		err = d.Set("expires", false)
-	} else if robot.ExpiresAt > 0 {
-		if d.Get("expires_at").(string) != "" {
-			err = d.Set("expires_at", time.Unix(int64(robot.ExpiresAt), 0).Format(time.RFC3339))
+	if robot.ExpiresAt > 0 {
+		err = d.Set("expires_at", time.Unix(int64(robot.ExpiresAt), 0).Format(time.RFC3339))
+		if err != nil {
+			return err
 		}
-	}
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -141,18 +130,13 @@ func mapDataToRobotAccountCreate(d *schema.ResourceData, robot *harbor.RobotAcco
 	robot.Description = d.Get("description").(string)
 	robot.Access = *access
 
-	if d.Get("expires").(bool) {
-		expiresAt := d.Get("expires_at").(string)
-		if expiresAt != "" {
-			t, err := time.Parse(time.RFC3339, expiresAt)
-			if err != nil {
-				return err
-			}
-			robot.ExpiresAt = t.Unix()
-		} else {
-			robot.ExpiresAt = 0
+	expiresAt := d.Get("expires_at").(string)
+	if expiresAt != "" {
+		t, err := time.Parse(time.RFC3339, expiresAt)
+		if err != nil {
+			return err
 		}
-
+		robot.ExpiresAt = t.Unix()
 	} else {
 		robot.ExpiresAt = -1
 	}

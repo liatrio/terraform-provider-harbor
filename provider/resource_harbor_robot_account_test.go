@@ -30,6 +30,27 @@ func TestAccHarborRobotAccountBasic(t *testing.T) {
 	})
 }
 
+func TestAccHarborRobotAccountExpires(t *testing.T) {
+	projectName := "terraform-" + acctest.RandString(10)
+	robotName := "robot$terraform-" + acctest.RandString(10)
+	resourceName := "harbor_robot_account.robot"
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		Steps: []resource.TestStep{
+			{
+				Config: testCreateHarborRobotAccountExpiration(projectName, robotName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testCheckResourceExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "token"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccHarborRobotAccountFull(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
@@ -135,6 +156,23 @@ resource "harbor_robot_account" "robot" {
 	}
 }
 	`, projectName, robotName, disabled)
+}
+func testCreateHarborRobotAccountExpiration(projectName string, robotName string) string {
+	return fmt.Sprintf(`
+resource "harbor_project" "project" {
+	name     = "%s"
+}
+
+resource "harbor_robot_account" "robot" {
+	name = "%s"
+	project_id = harbor_project.project.id
+	expires_at = timeadd("2021-11-22T00:10:00Z", "100h")
+	access {
+		resource = "image"
+		action = "pull"
+	}
+}
+	`, projectName, robotName)
 }
 
 func testCreateHarborRobotAccountFull(projectName string, robotName string, description string, disabled string) string {
