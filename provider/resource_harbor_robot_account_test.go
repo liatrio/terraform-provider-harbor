@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/liatrio/terraform-provider-harbor/harbor"
 )
 
@@ -46,6 +47,28 @@ func TestAccHarborRobotAccountExpiresAt(t *testing.T) {
 					testCheckResourceExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "token"),
 					resource.TestCheckResourceAttr(resourceName, "expires_at", "2035-01-01T00:00:00Z"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccHarborRobotAccountDoesNotExpire(t *testing.T) {
+	projectName := "terraform-" + acctest.RandString(10)
+	robotName := "robot$terraform-" + acctest.RandString(10)
+	resourceName := "harbor_robot_account.robot"
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		Steps: []resource.TestStep{
+			{
+				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testCheckResourceExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "token"),
+					testCheckRobotAccountDoesNotExpire(resourceName),
 				),
 			},
 		},
@@ -228,4 +251,27 @@ resource "harbor_robot_account" "robot" {
 	}
 }
 	`, projectName, robotName, description, disabled)
+}
+
+func testCheckRobotAccountDoesNotExpire(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		client := testAccProvider.Meta().(*harbor.Client)
+
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource not found: %s", resourceName)
+		}
+
+		resourceID := rs.Primary.ID
+
+		robotAccount, err := client.GetRobotAccount(resourceID)
+		if err != nil {
+			return fmt.Errorf("error getting resource with id %s: %s", resourceID, err)
+		}
+		if robotAccount.ExpiresAt != -1 {
+			return fmt.Errorf("robot account with id: %s shouldn't expire", resourceID)
+		}
+
+		return nil
+	}
 }
