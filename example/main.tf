@@ -28,3 +28,11 @@ resource "harbor_robot_account" "robot" {
     action = "pull"
   }
 }
+
+resource "harbor_webhook" "webhook" {
+  name = "webhook1"
+  project_id = harbor_project.project.id
+  enabled = true
+  skip_cert_verify = true
+  address = "http://localhost:80"
+}

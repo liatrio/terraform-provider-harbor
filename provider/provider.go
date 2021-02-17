@@ -10,6 +10,7 @@ func New() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"harbor_project":       resourceProject(),
 			"harbor_robot_account": resourceRobotAccount(),
+			"harbor_webhook":       resourceWebhook(),
 		},
 		Schema: map[string]*schema.Schema{
 			"url": {
