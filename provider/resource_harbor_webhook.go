@@ -89,7 +89,7 @@ func resourceWebhook() *schema.Resource {
 							Type:        schema.TypeBool,
 							Description: "If true, skips tls certificate verification of webhook target.",
 							Optional:    true,
-							Default:     true,
+							Default:     false,
 						},
 						"address": {
 							Type:         schema.TypeString,
