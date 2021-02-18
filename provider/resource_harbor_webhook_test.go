@@ -34,6 +34,69 @@ func TestAccHarborWebhookBasic(t *testing.T) {
 	})
 }
 
+func TestAccHarborWebhookMultiTarget(t *testing.T) {
+	projectName := "terraform-" + acctest.RandString(10)
+	webhookName := "terraform-" + acctest.RandString(10)
+	resourceName := "harbor_webhook.webhook"
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		Steps: []resource.TestStep{
+			{
+				Config: testCreateHarborWebhookMultiTarget(
+					projectName,
+					webhookName,
+					[]string{"DELETE_ARTIFACT"},
+					"http",
+					"http://domain.example/webhook",
+					"http",
+					"http://domain.example/webhookTwo",
+				),
+				Check: testCheckResourceExists(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccHarborWebhookAllEvents(t *testing.T) {
+	projectName := "terraform-" + acctest.RandString(10)
+	webhookName := "terraform-" + acctest.RandString(10)
+	resourceName := "harbor_webhook.webhook"
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		Steps: []resource.TestStep{
+			{
+				Config: testCreateHarborWebhookBasic(
+					projectName,
+					webhookName,
+					[]string{
+						"DELETE_ARTIFACT",
+						"PULL_ARTIFACT",
+						"PUSH_ARTIFACT",
+						"DELETE_CHART",
+						"DOWNLOAD_CHART",
+						"UPLOAD_CHART",
+						"QUOTA_EXCEED",
+						"QUOTA_WARNING",
+						"REPLICATION",
+						"SCANNING_FAILED",
+						"SCANNING_COMPLETED",
+						"TAG_RETENTION",
+					},
+					"http",
+					"http://domain.example/webhook",
+				),
+				Check: testCheckResourceExists(resourceName),
+			},
+		},
+	})
+}
+
 func TestAccHarborWebhookFull(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 	webhookName := "terraform-" + acctest.RandString(10)
@@ -167,6 +230,36 @@ resource "harbor_webhook" "webhook" {
 	}
 }
 	`, projectName, webhookName, `"`+strings.Join(eventTypes, `","`)+`"`, targetType, targetAddress)
+}
+
+func testCreateHarborWebhookMultiTarget(
+	projectName string,
+	webhookName string,
+	eventTypes []string,
+	targetType string,
+	targetAddress string,
+	targetTypeTwo string,
+	targetAddressTwo string,
+) string {
+	return fmt.Sprintf(`
+resource "harbor_project" "project" {
+	name     = "%s"
+}
+
+resource "harbor_webhook" "webhook" {
+	name = "%s"
+	project_id = harbor_project.project.id
+	event_types = [%s]
+	target {
+		type = "%s"
+		address = "%s"
+	}
+	target {
+		type = "%s"
+		address = "%s"
+	}
+}
+	`, projectName, webhookName, `"`+strings.Join(eventTypes, `","`)+`"`, targetType, targetAddress, targetTypeTwo, targetAddressTwo)
 }
 
 func testCreateHarborWebhookFull(

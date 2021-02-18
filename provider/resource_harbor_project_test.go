@@ -81,12 +81,12 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func testHarborProjectBasic(projectName string, public bool, auto_scan bool) string {
+func testHarborProjectBasic(projectName string, public bool, autoScan bool) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
 	name      = "%s"
 	public    = %t
 	auto_scan = %t
 }
-	`, projectName, public, auto_scan)
+	`, projectName, public, autoScan)
 }

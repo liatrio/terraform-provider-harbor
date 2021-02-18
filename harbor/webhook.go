@@ -12,7 +12,7 @@ type Webhook struct {
 	Enabled      bool               `json:"enabled"`
 	EventTypes   []string           `json:"event_types"`
 	ProjectID    int                `json:"project_id,omitempty"`
-	Id           int64              `json:"id,omitempty"`
+	ID           int64              `json:"id,omitempty"`
 	Name         string             `json:"name,omitempty"`
 	Targets      []WebhookTargetObj `json:"targets"`
 }
