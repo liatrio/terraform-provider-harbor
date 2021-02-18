@@ -47,14 +47,14 @@ Accepted values are:
   Accepted values are `http` and `slack`.
   * `address` - (Required) The endpoint URL for the webhook payload.
   * `auth_header` - (Optional) The auth header to include with webhook payload.
-  * `skip_cert_verify` - (Optional) If `true`, skips verification of endpoints
+  * `skip_cert_verify` - (Optional) If `true`, skips verification of endpoint's
   tls certificate. Defaults to `true`.
 * `enabled` - (Optional) If `false`, webhooks will not trigger even if
 configured events occur. Defaults to `true`
-* `description` - (Optional) A description of the webhook policy
+* `description` - (Optional) The description of the webhook policy
 
 ## Attribute Reference
 
 The following attributes are exported:
 
-* `id` - The object ID of the robot account.
+* `id` - The object ID of the webhook policy.
