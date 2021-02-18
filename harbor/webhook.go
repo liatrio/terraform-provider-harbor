@@ -5,16 +5,16 @@ import (
 )
 
 type Webhook struct {
-	UpdateTime   string           `json:"update_time,omitempty"`
-	Description  string           `json:"description,omitempty"`
-	Creator      string           `json:"creator,omitempty"`
-	CreationTime string           `json:"creation_time,omitempty"`
-	Enabled      bool             `json:"enabled"`
-	EventTypes   []string         `json:"event_types"`
-	ProjectID    int              `json:"project_id"`
-	Id           int64            `json:"id"`
-	Name         string           `json:"name,omitempty"`
-	Metadata     WebhookTargetObj `json:"metadata"`
+	UpdateTime   string             `json:"update_time,omitempty"`
+	Description  string             `json:"description,omitempty"`
+	Creator      string             `json:"creator,omitempty"`
+	CreationTime string             `json:"creation_time,omitempty"`
+	Enabled      bool               `json:"enabled"`
+	EventTypes   []string           `json:"event_types"`
+	ProjectID    int                `json:"project_id,omitempty"`
+	Id           int64              `json:"id,omitempty"`
+	Name         string             `json:"name,omitempty"`
+	Targets      []WebhookTargetObj `json:"targets"`
 }
 
 type WebhookTargetObj struct {
