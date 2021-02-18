@@ -53,7 +53,7 @@ func mapDataToProjectReq(d *schema.ResourceData, project *harbor.ProjectReq) err
 	project.ProjectName = d.Get("name").(string)
 
 	project.Metadata = harbor.ProjectMetadata{
-		Public: strconv.FormatBool(d.Get("public").(bool)),
+		Public:   strconv.FormatBool(d.Get("public").(bool)),
 		AutoScan: strconv.FormatBool(d.Get("auto_scan").(bool)),
 	}
 	return nil
@@ -72,7 +72,7 @@ func mapProjectToData(d *schema.ResourceData, project *harbor.Project) error {
 	if err != nil {
 		return err
 	}
-	autoScan, err := strconv.ParseBool(project.Metadata.Public)
+	autoScan, err := strconv.ParseBool(project.Metadata.AutoScan)
 	if err != nil {
 		return err
 	}
