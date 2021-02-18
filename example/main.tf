@@ -32,7 +32,9 @@ resource "harbor_robot_account" "robot" {
 resource "harbor_webhook" "webhook" {
   name = "webhook1"
   project_id = harbor_project.project.id
-  enabled = true
-  skip_cert_verify = true
-  address = "http://localhost:80"
+  event_types = ["DELETE_ARTIFACT"]
+  target {
+    type = "http"
+    address = "http://domain.example/webhook"
+  }
 }
