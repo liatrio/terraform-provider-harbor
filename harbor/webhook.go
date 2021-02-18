@@ -37,11 +37,7 @@ func (client *Client) GetWebhook(id string) (*Webhook, error) {
 
 func (client *Client) NewWebhook(projectID string, webhook *Webhook) (string, error) {
 	_, location, err := client.post(APIURLVersion2, fmt.Sprintf("%s/webhook/policies", projectID), webhook)
-	if err != nil {
-		return "", err
-	}
-
-	return location, nil
+	return location, err
 }
 
 func (client *Client) UpdateWebhook(id string, webhook *Webhook) error {
