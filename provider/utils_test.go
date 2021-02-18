@@ -21,7 +21,7 @@ func testCheckResourceExists(resourceName string) resource.TestCheckFunc {
 
 		_, err := client.GetResource(resourceID)
 		if err != nil {
-			return fmt.Errorf("error getting project with id %s: %s", resourceID, err)
+			return fmt.Errorf("error getting resource with id %s: %s", resourceID, err)
 		}
 
 		return nil
@@ -54,7 +54,7 @@ func testCheckResourceDestroy(resourceType string) resource.TestCheckFunc {
 
 			resource, _ := client.GetResource(id)
 			if resource != nil {
-				return fmt.Errorf("project with id %s still exists", id)
+				return fmt.Errorf("resource with id %s still exists", id)
 			}
 		}
 
