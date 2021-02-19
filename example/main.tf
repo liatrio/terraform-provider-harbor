@@ -28,3 +28,13 @@ resource "harbor_robot_account" "robot" {
     action = "pull"
   }
 }
+
+resource "harbor_webhook" "webhook" {
+  name = "webhook1"
+  project_id = harbor_project.project.id
+  event_types = ["DELETE_ARTIFACT"]
+  target {
+    type = "http"
+    address = "http://domain.example/webhook"
+  }
+}

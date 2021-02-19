@@ -46,11 +46,7 @@ func (client *Client) GetProject(id string) (*Project, error) {
 
 func (client *Client) NewProject(project *ProjectReq) (string, error) {
 	_, location, err := client.post(APIURLVersion2, "/projects", project)
-	if err != nil {
-		return "", err
-	}
-
-	return location, nil
+	return location, err
 }
 
 func (client *Client) UpdateProject(id string, project *ProjectReq) error {

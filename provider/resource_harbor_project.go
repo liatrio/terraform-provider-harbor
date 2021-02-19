@@ -39,6 +39,12 @@ func resourceProject() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 			},
+			"auto_scan": {
+				Type:        schema.TypeBool,
+				Description: "When true, it will auto scan on push.",
+				Optional:    true,
+				Default:     false,
+			},
 		},
 	}
 }
@@ -47,9 +53,9 @@ func mapDataToProjectReq(d *schema.ResourceData, project *harbor.ProjectReq) err
 	project.ProjectName = d.Get("name").(string)
 
 	project.Metadata = harbor.ProjectMetadata{
-		Public: strconv.FormatBool(d.Get("public").(bool)),
+		Public:   strconv.FormatBool(d.Get("public").(bool)),
+		AutoScan: strconv.FormatBool(d.Get("auto_scan").(bool)),
 	}
-
 	return nil
 }
 
@@ -63,6 +69,14 @@ func mapProjectToData(d *schema.ResourceData, project *harbor.Project) error {
 		return err
 	}
 	err = d.Set("public", public)
+	if err != nil {
+		return err
+	}
+	autoScan, err := strconv.ParseBool(project.Metadata.AutoScan)
+	if err != nil {
+		return err
+	}
+	err = d.Set("auto_scan", autoScan)
 	if err != nil {
 		return err
 	}

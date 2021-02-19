@@ -24,6 +24,7 @@ website/node_modules
 *.test
 *.iml
 terraform-provider-harbor
+.terraform.lock.hcl
 
 website/vendor
 

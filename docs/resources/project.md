@@ -19,6 +19,8 @@ The following arguments are supported:
 project to be created.
 * `public` - (Optional) If `true` any user will have read permissions to repositories
 under this project. Defaults to `false`
+* `auto_scan` - (Optional) If `true`, images pushed to this project will be automatically
+vulnerability scanned. Defaults to `false`
 
 ## Attribute Reference
 
