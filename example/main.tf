@@ -30,11 +30,18 @@ resource "harbor_robot_account" "robot" {
 }
 
 resource "harbor_webhook" "webhook" {
-  name = "webhook1"
+  name = "webhook"
   project_id = harbor_project.project.id
   event_types = ["DELETE_ARTIFACT"]
   target {
     type = "http"
     address = "http://domain.example/webhook"
   }
+}
+
+resource "harbor_label" "label" {
+  name = "label"
+  color = "#FFFFFF"
+  description = "An example label"
+  project_id = harbor_project.project.id
 }
