@@ -11,6 +11,7 @@ func New() *schema.Provider {
 			"harbor_project":       resourceProject(),
 			"harbor_robot_account": resourceRobotAccount(),
 			"harbor_webhook":       resourceWebhook(),
+			"harbor_label":         resourceLabel(),
 		},
 		Schema: map[string]*schema.Schema{
 			"url": {
