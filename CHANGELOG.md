@@ -1,6 +1,8 @@
 ## 0.3.2 (Unreleased)
 
+FEATURES:
 
+- Adds support for the `harbor_label` resource
 
 ## 0.3.1 (February 19, 2021)
 
