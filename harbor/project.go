@@ -26,10 +26,10 @@ type Project struct {
 
 type ProjectMetadata struct {
 	EnableContentTrust   string `json:"enable_content_trust,omitempty"`
-	AutoScan             string `json:"auto_scan,omitempty"`
+	AutoScan             bool   `json:"auto_scan,string"`
 	Severity             string `json:"severity,omitempty"`
 	ReuseSysCveWhitelist string `json:"reuse_sys_cve_whitelist,omitempty"`
-	Public               string `json:"public,omitempty"`
+	Public               bool   `json:"public,string"`
 	PreventVul           string `json:"prevent_vul,omitempty"`
 }
 

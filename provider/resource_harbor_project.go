@@ -2,7 +2,6 @@ package provider
 
 import (
 	"regexp"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -53,8 +52,8 @@ func mapDataToProjectReq(d *schema.ResourceData, project *harbor.ProjectReq) err
 	project.ProjectName = d.Get("name").(string)
 
 	project.Metadata = harbor.ProjectMetadata{
-		Public:   strconv.FormatBool(d.Get("public").(bool)),
-		AutoScan: strconv.FormatBool(d.Get("auto_scan").(bool)),
+		Public:   d.Get("public").(bool),
+		AutoScan: d.Get("auto_scan").(bool),
 	}
 	return nil
 }
@@ -64,19 +63,11 @@ func mapProjectToData(d *schema.ResourceData, project *harbor.Project) error {
 	if err != nil {
 		return err
 	}
-	public, err := strconv.ParseBool(project.Metadata.Public)
+	err = d.Set("public", project.Metadata.Public)
 	if err != nil {
 		return err
 	}
-	err = d.Set("public", public)
-	if err != nil {
-		return err
-	}
-	autoScan, err := strconv.ParseBool(project.Metadata.AutoScan)
-	if err != nil {
-		return err
-	}
-	err = d.Set("auto_scan", autoScan)
+	err = d.Set("auto_scan", project.Metadata.AutoScan)
 	if err != nil {
 		return err
 	}
