@@ -103,7 +103,7 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 }
 
 func TestAccHarborProjectImportAfterManualCreate(t *testing.T) {
-	projectName := "terrafor-" + acctest.RandString(10)
+	projectName := "terraform-" + acctest.RandString(10)
 
 	client := testAccProvider.Meta().(*harbor.Client)
 	project := &harbor.ProjectReq{}
