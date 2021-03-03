@@ -1,8 +1,14 @@
-## 0.3.2 (Unreleased)
+## 0.3.3 (March 3, 2021)
+
+BUG FIXES:
+
+- Fixes errors with `harbor_project` resources that were either imported or generated with an earlier provider version, and had never set the `auto_scan` attribute ([#14](https://github.com/liatrio/terraform-provider-harbor/pull/14))
+
+## 0.3.2 (February 25, 2021)
 
 FEATURES:
 
-- Adds support for the `harbor_label` resource
+- Adds support for the `harbor_label` resource ([#13](https://github.com/liatrio/terraform-provider-harbor/pull/13))
 
 ## 0.3.1 (February 19, 2021)
 

@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -18,8 +19,28 @@ func TestAccHarborProjectBasic(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, false, false),
+				Config: testHarborProjectBasic(projectName),
 				Check:  testCheckResourceExists("harbor_project.project"),
+			},
+		},
+	})
+}
+
+func TestAccHarborProjectFull(t *testing.T) {
+	projectName := "terraform-" + acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		Steps: []resource.TestStep{
+			{
+				Config: testHarborProjectFull(projectName, true, true),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceExists("harbor_project.project"),
+					resource.TestCheckResourceAttr("harbor_project.project", "public", "true"),
+					resource.TestCheckResourceAttr("harbor_project.project", "auto_scan", "true"),
+				),
 			},
 		},
 	})
@@ -34,14 +55,15 @@ func TestAccHarborProjectUpdate(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, false, false),
+				Config: testHarborProjectFull(projectName, false, false),
 				Check:  testCheckResourceExists("harbor_project.project"),
 			},
 			{
-				Config: testHarborProjectBasic(projectName, true, true),
+				Config: testHarborProjectFull(projectName, true, true),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceExists("harbor_project.project"),
 					resource.TestCheckResourceAttr("harbor_project.project", "public", "true"),
+					resource.TestCheckResourceAttr("harbor_project.project", "auto_scan", "true"),
 				),
 			},
 		},
@@ -59,7 +81,7 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy: testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
-				Config: testHarborProjectBasic(projectName, false, false),
+				Config: testHarborProjectFull(projectName, false, false),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceExists("harbor_project.project"),
 					testCheckGetResourceID("harbor_project.project", &projectID),
@@ -74,14 +96,57 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 						t.Fatal(err)
 					}
 				},
-				Config: testHarborProjectBasic(projectName, true, true),
+				Config: testHarborProjectFull(projectName, true, true),
 				Check:  testCheckResourceExists("harbor_project.project"),
 			},
 		},
 	})
 }
 
-func testHarborProjectBasic(projectName string, public bool, autoScan bool) string {
+func TestAccHarborProjectImportAfterManualCreate(t *testing.T) {
+	_, exists := os.LookupEnv("TF_ACC")
+	if !exists {
+		t.Skip()
+	}
+	projectName := "terraform-" + acctest.RandString(10)
+
+	client := testAccProvider.Meta().(*harbor.Client)
+	project := &harbor.ProjectReq{}
+	project.ProjectName = projectName
+
+	location, err := client.NewProject(project)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		Steps: []resource.TestStep{
+			{
+				Config:        testHarborProjectBasic(projectName),
+				ResourceName:  "harbor_project.project",
+				ImportStateId: location,
+				ImportState:   true,
+			},
+		},
+	})
+	err = client.DeleteProject(location)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func testHarborProjectBasic(projectName string) string {
+	return fmt.Sprintf(`
+resource "harbor_project" "project" {
+	name      = "%s"
+}
+	`, projectName)
+}
+
+func testHarborProjectFull(projectName string, public bool, autoScan bool) string {
 	return fmt.Sprintf(`
 resource "harbor_project" "project" {
 	name      = "%s"
