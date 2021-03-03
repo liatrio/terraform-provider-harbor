@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -103,6 +104,10 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 }
 
 func TestAccHarborProjectImportAfterManualCreate(t *testing.T) {
+	_, exists := os.LookupEnv("TF_ACC")
+	if !exists {
+		t.Skip()
+	}
 	projectName := "terraform-" + acctest.RandString(10)
 
 	client := testAccProvider.Meta().(*harbor.Client)
