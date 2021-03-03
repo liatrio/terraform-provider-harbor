@@ -127,7 +127,10 @@ func TestAccHarborProjectImportAfterManualCreate(t *testing.T) {
 			},
 		},
 	})
-	client.DeleteProject(location)
+	err = client.DeleteProject(location)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func testHarborProjectBasic(projectName string) string {
