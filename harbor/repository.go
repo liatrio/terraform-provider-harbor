@@ -2,6 +2,7 @@ package harbor
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -29,7 +30,9 @@ func (client *Client) GetRepositories(projectName string) ([]*Repository, error)
 }
 
 func (client *Client) DeleteRepository(projectName string, repoName string) error {
-	return client.delete(APIURLVersion2, fmt.Sprintf("/projects/%s/repositories/%s", projectName, repoName), nil)
+	repo := strings.TrimPrefix(repoName, projectName+"/")
+
+	return client.delete(APIURLVersion2, fmt.Sprintf("/projects/%s/repositories/%s", projectName, repo), nil)
 }
 
 func (client *Client) DeleteRepositories(projectName string, repos []*Repository) error {
