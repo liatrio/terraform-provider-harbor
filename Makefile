@@ -17,3 +17,6 @@ local:
 
 testacc: install local
 	./scripts/runAccTests.sh
+
+vet:
+	go vet ./...

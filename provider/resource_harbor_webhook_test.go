@@ -11,6 +11,8 @@ import (
 )
 
 func TestAccHarborWebhookBasic(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	webhookName := "terraform-" + acctest.RandString(10)
 	resourceName := "harbor_webhook.webhook"
@@ -35,6 +37,8 @@ func TestAccHarborWebhookBasic(t *testing.T) {
 }
 
 func TestAccHarborWebhookMultiTarget(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	webhookName := "terraform-" + acctest.RandString(10)
 	resourceName := "harbor_webhook.webhook"
@@ -61,6 +65,8 @@ func TestAccHarborWebhookMultiTarget(t *testing.T) {
 }
 
 func TestAccHarborWebhookAllEvents(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	webhookName := "terraform-" + acctest.RandString(10)
 	resourceName := "harbor_webhook.webhook"
@@ -98,6 +104,8 @@ func TestAccHarborWebhookAllEvents(t *testing.T) {
 }
 
 func TestAccHarborWebhookFull(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	webhookName := "terraform-" + acctest.RandString(10)
 	resourceName := "harbor_webhook.webhook"
@@ -131,6 +139,8 @@ func TestAccHarborWebhookFull(t *testing.T) {
 }
 
 func TestAccHarborWebhookUpdate(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	webhookName := "terraform-" + acctest.RandString(10)
 	resourceName := "harbor_webhook.webhook"
@@ -168,6 +178,8 @@ func TestAccHarborWebhookUpdate(t *testing.T) {
 }
 
 func TestAccHarborWebhookCreateAfterManualDestroy(t *testing.T) {
+	t.Parallel()
+
 	var webhookID string
 
 	projectName := "terraform-" + acctest.RandString(10)

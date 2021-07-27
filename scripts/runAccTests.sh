@@ -13,4 +13,4 @@ export HARBOR_URL
 export HARBOR_USERNAME
 export HARBOR_PASSWORD
 
-TF_ACC=1 go test -timeout 20m $(go list ./... | grep -v 'vendor') -v
+TF_ACC=1 go test -timeout 20m -parallel 4 $(go list ./... | grep -v 'vendor') -v

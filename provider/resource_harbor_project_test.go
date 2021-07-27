@@ -11,6 +11,8 @@ import (
 )
 
 func TestAccHarborProjectBasic(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -27,6 +29,8 @@ func TestAccHarborProjectBasic(t *testing.T) {
 }
 
 func TestAccHarborProjectFull(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -47,6 +51,8 @@ func TestAccHarborProjectFull(t *testing.T) {
 }
 
 func TestAccHarborProjectUpdate(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -71,6 +77,8 @@ func TestAccHarborProjectUpdate(t *testing.T) {
 }
 
 func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
+	t.Parallel()
+
 	var projectID string
 
 	projectName := "terraform-" + acctest.RandString(10)
@@ -104,6 +112,8 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 }
 
 func TestAccHarborProjectImportAfterManualCreate(t *testing.T) {
+	t.Parallel()
+
 	_, exists := os.LookupEnv("TF_ACC")
 	if !exists {
 		t.Skip()
