@@ -137,8 +137,9 @@ func resourceProjectDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	charts, err := client.GetCharts(projectName)
-	if err != nil {
-		return handleNotFoundError(err, d)
+	// this can return a 404 if chartmuseum is disabled
+	if err != nil && !harbor.ErrorIs404(err) {
+		return err
 	}
 
 	if len(charts) > 0 {
