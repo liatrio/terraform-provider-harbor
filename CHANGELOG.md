@@ -1,3 +1,13 @@
+## 0.4.0 (July 27, 2021)
+
+IMPROVEMENTS:
+
+- Update to the latest version of the Terraform Plugin SDK. This should improve compatibility with Terraform v1.0 ([#16](https://github.com/liatrio/terraform-provider-harbor/pull/16))
+
+BUG FIXES:
+
+- Fix an issue with deleting the `harbor_project` resource when chartmuseum is disabled ([#16](https://github.com/liatrio/terraform-provider-harbor/pull/16))
+
 ## 0.3.3 (March 3, 2021)
 
 BUG FIXES:
