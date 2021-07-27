@@ -10,6 +10,8 @@ import (
 )
 
 func TestAccHarborLabelBasic(t *testing.T) {
+	t.Parallel()
+
 	labelName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -26,6 +28,8 @@ func TestAccHarborLabelBasic(t *testing.T) {
 }
 
 func TestAccHarborLabelFull(t *testing.T) {
+	t.Parallel()
+
 	labelName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -46,6 +50,8 @@ func TestAccHarborLabelFull(t *testing.T) {
 }
 
 func TestAccHarborLabelUpdate(t *testing.T) {
+	t.Parallel()
+
 	labelName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
@@ -70,6 +76,8 @@ func TestAccHarborLabelUpdate(t *testing.T) {
 }
 
 func TestAccHarborLabelUpdateProjectID(t *testing.T) {
+	t.Parallel()
+
 	labelName := "terraform-" + acctest.RandString(10)
 	projectName := "terraform-" + acctest.RandString(10)
 
@@ -94,6 +102,8 @@ func TestAccHarborLabelUpdateProjectID(t *testing.T) {
 }
 
 func TestAccHarborLabelUpdateScope(t *testing.T) {
+	t.Parallel()
+
 	labelName := "terraform-" + acctest.RandString(10)
 	projectName := "terraform-" + acctest.RandString(10)
 
@@ -118,6 +128,8 @@ func TestAccHarborLabelUpdateScope(t *testing.T) {
 }
 
 func TestAccHarborLabelCreateAfterManualDestroy(t *testing.T) {
+	t.Parallel()
+
 	var labelID string
 
 	labelName := "terraform-" + acctest.RandString(10)

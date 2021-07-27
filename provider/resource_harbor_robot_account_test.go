@@ -11,6 +11,8 @@ import (
 )
 
 func TestAccHarborRobotAccountBasic(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -32,6 +34,8 @@ func TestAccHarborRobotAccountBasic(t *testing.T) {
 }
 
 func TestAccHarborRobotAccountExpiresAt(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -54,6 +58,8 @@ func TestAccHarborRobotAccountExpiresAt(t *testing.T) {
 }
 
 func TestAccHarborRobotAccountDoesNotExpire(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -76,6 +82,8 @@ func TestAccHarborRobotAccountDoesNotExpire(t *testing.T) {
 }
 
 func TestAccHarborRobotAccountExpiresAt64BitTimestamp(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -98,6 +106,8 @@ func TestAccHarborRobotAccountExpiresAt64BitTimestamp(t *testing.T) {
 }
 
 func TestAccHarborRobotAccountFull(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -127,6 +137,8 @@ func TestAccHarborRobotAccountFull(t *testing.T) {
 }
 
 func TestAccHarborRobotAccountUpdate(t *testing.T) {
+	t.Parallel()
+
 	projectName := "terraform-" + acctest.RandString(10)
 	robotName := "robot$terraform-" + acctest.RandString(10)
 	resourceName := "harbor_robot_account.robot"
@@ -152,6 +164,8 @@ func TestAccHarborRobotAccountUpdate(t *testing.T) {
 }
 
 func TestAccHarborRobotAccountCreateAfterManualDestroy(t *testing.T) {
+	t.Parallel()
+
 	var robotID string
 
 	projectName := "terraform-" + acctest.RandString(10)
