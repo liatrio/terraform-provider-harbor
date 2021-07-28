@@ -1,6 +1,6 @@
 module github.com/liatrio/terraform-provider-harbor
 
-go 1.12
+go 1.16
 
 require (
 	github.com/hashicorp/errwrap v1.0.0
