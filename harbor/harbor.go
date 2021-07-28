@@ -19,6 +19,7 @@ type Client struct {
 	username   string
 	password   string
 	httpClient *http.Client
+	userAgent  string
 }
 
 const (
@@ -26,10 +27,11 @@ const (
 	APIURLVersion2 = "/api/v2.0"
 )
 
-func NewClient(baseURL string, username string, password string, tlsInsecureSkipVerify bool) (*Client, error) {
+func NewClient(baseURL string, username string, password string, tlsInsecureSkipVerify bool, userAgent string) *Client {
 	transport := &http.Transport{
 		//nolint:gosec
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: tlsInsecureSkipVerify},
+		Proxy:           http.ProxyFromEnvironment,
 	}
 
 	httpClient := &http.Client{
@@ -41,14 +43,18 @@ func NewClient(baseURL string, username string, password string, tlsInsecureSkip
 		username:   username,
 		password:   password,
 		httpClient: httpClient,
+		userAgent:  userAgent,
 	}
 
-	return client, nil
+	return client
 }
 
 func (client *Client) sendRequest(request *http.Request) ([]byte, string, error) {
 	request.SetBasicAuth(client.username, client.password)
 	request.Header.Add("Content-Type", "application/json")
+	if client.userAgent != "" {
+		request.Header.Add("User-Agent", client.userAgent)
+	}
 
 	requestMethod := request.Method
 	requestPath := request.URL.Path

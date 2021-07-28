@@ -15,9 +15,9 @@ func TestAccHarborLabelBasic(t *testing.T) {
 	labelName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_label"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_label"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborLabelBasic(labelName),
@@ -33,9 +33,9 @@ func TestAccHarborLabelFull(t *testing.T) {
 	labelName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_label"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_label"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborLabelFull(labelName, "#111111", "Test Description"),
@@ -55,9 +55,9 @@ func TestAccHarborLabelUpdate(t *testing.T) {
 	labelName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_label"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_label"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborLabelFull(labelName, "#111111", "Test Description"),
@@ -82,9 +82,9 @@ func TestAccHarborLabelUpdateProjectID(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_label"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_label"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborLabelWithMultiProject(projectName+"1", projectName+"2", labelName, "harbor_project.project.id"),
@@ -108,9 +108,9 @@ func TestAccHarborLabelUpdateScope(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_label"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_label"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborLabelWithProject(projectName, labelName),
@@ -135,9 +135,9 @@ func TestAccHarborLabelCreateAfterManualDestroy(t *testing.T) {
 	labelName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_label"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_label"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborLabelBasic(labelName),
