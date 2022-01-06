@@ -1,3 +1,9 @@
+## 0.5.0 (January 6, 2022)
+
+IMPROVEMENTS:
+
+- Update Go to 1.16 to support the `darwin_arm64` platform ([#17](https://github.com/liatrio/terraform-provider-harbor/pull/17))
+
 ## 0.4.0 (July 27, 2021)
 
 IMPROVEMENTS:
