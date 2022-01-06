@@ -18,9 +18,9 @@ func TestAccHarborWebhookBasic(t *testing.T) {
 	resourceName := "harbor_webhook.webhook"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_webhook"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborWebhookBasic(
@@ -44,9 +44,9 @@ func TestAccHarborWebhookMultiTarget(t *testing.T) {
 	resourceName := "harbor_webhook.webhook"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_webhook"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborWebhookMultiTarget(
@@ -72,9 +72,9 @@ func TestAccHarborWebhookAllEvents(t *testing.T) {
 	resourceName := "harbor_webhook.webhook"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_webhook"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborWebhookBasic(
@@ -111,9 +111,9 @@ func TestAccHarborWebhookFull(t *testing.T) {
 	resourceName := "harbor_webhook.webhook"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_webhook"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborWebhookFull(
@@ -146,9 +146,9 @@ func TestAccHarborWebhookUpdate(t *testing.T) {
 	resourceName := "harbor_webhook.webhook"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_webhook"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborWebhookBasic(
@@ -187,9 +187,9 @@ func TestAccHarborWebhookCreateAfterManualDestroy(t *testing.T) {
 	resourceName := "harbor_webhook.webhook"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_webhook"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_webhook"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborWebhookBasic(

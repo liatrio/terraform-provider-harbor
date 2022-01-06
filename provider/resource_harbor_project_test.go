@@ -16,9 +16,9 @@ func TestAccHarborProjectBasic(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborProjectBasic(projectName),
@@ -34,9 +34,9 @@ func TestAccHarborProjectFull(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborProjectFull(projectName, true, true),
@@ -56,9 +56,9 @@ func TestAccHarborProjectUpdate(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborProjectFull(projectName, false, false),
@@ -84,9 +84,9 @@ func TestAccHarborProjectCreateAfterManualDestroy(t *testing.T) {
 	projectName := "terraform-" + acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
 				Config: testHarborProjectFull(projectName, false, false),
@@ -120,19 +120,18 @@ func TestAccHarborProjectImportAfterManualCreate(t *testing.T) {
 	}
 	projectName := "terraform-" + acctest.RandString(10)
 
-	client := testAccProvider.Meta().(*harbor.Client)
 	project := &harbor.ProjectReq{}
 	project.ProjectName = projectName
 
-	location, err := client.NewProject(project)
+	location, err := harborClient.NewProject(project)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_project"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_project"),
 		Steps: []resource.TestStep{
 			{
 				Config:        testHarborProjectBasic(projectName),
@@ -142,7 +141,7 @@ func TestAccHarborProjectImportAfterManualCreate(t *testing.T) {
 			},
 		},
 	})
-	err = client.DeleteProject(location)
+	err = harborClient.DeleteProject(location)
 	if err != nil {
 		t.Fatal(err)
 	}

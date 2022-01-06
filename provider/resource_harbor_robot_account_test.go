@@ -18,9 +18,9 @@ func TestAccHarborRobotAccountBasic(t *testing.T) {
 	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
@@ -41,9 +41,9 @@ func TestAccHarborRobotAccountExpiresAt(t *testing.T) {
 	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborRobotAccountExpiration(projectName, robotName, "2035-01-01T00:00:00Z"),
@@ -65,9 +65,9 @@ func TestAccHarborRobotAccountDoesNotExpire(t *testing.T) {
 	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
@@ -89,9 +89,9 @@ func TestAccHarborRobotAccountExpiresAt64BitTimestamp(t *testing.T) {
 	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborRobotAccountExpiration(projectName, robotName, "2040-01-01T00:00:00Z"),
@@ -113,9 +113,9 @@ func TestAccHarborRobotAccountFull(t *testing.T) {
 	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborRobotAccountFull(
@@ -144,9 +144,9 @@ func TestAccHarborRobotAccountUpdate(t *testing.T) {
 	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
@@ -173,9 +173,9 @@ func TestAccHarborRobotAccountCreateAfterManualDestroy(t *testing.T) {
 	resourceName := "harbor_robot_account.robot"
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDestroy("harbor_robot_account"),
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testCheckResourceDestroy("harbor_robot_account"),
 		Steps: []resource.TestStep{
 			{
 				Config: testCreateHarborRobotAccountBasic(projectName, robotName, "false"),
